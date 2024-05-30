@@ -80,9 +80,11 @@ describe('UnitsController', () => {
 
   describe('PUT api/v1/units/:id', () => {
     it('should be rejected if units not found', async () => {
+      await testService.deleteUnits();
+      await testService.createUnits();
       const unit = await testService.getUnits();
       const response = await request(app.getHttpServer())
-        .put(`/api/v1/units/${unit.id + 12}`)
+        .put(`/api/v1/units/${unit.id + '12'}`)
         .send({
           name: 'unit update',
           type: 'unit update',
