@@ -12,4 +12,23 @@ export class TestService {
       },
     });
   }
+
+  async createUnits() {
+    return this.prismaService.unit.create({
+      data: {
+        id: 'testId',
+        name: 'test',
+        type: 'test',
+        egi: 'test',
+      },
+    });
+  }
+
+  async getUnits() {
+    return this.prismaService.unit.findFirst({
+      where: {
+        id: 'testId',
+      },
+    });
+  }
 }

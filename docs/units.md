@@ -43,6 +43,19 @@ Status Code: 400
 }
 ```
 
+Response Body (Failed):
+
+Status Code: 409
+
+```json
+{
+  "error": {
+    "status": 409,
+    "message": "Units already exist"
+  }
+}
+```
+
 ## Update Units
 
 Endpoints: PUT /api/units/:id
