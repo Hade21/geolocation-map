@@ -1,12 +1,13 @@
-import { Body, Controller } from '@nestjs/common';
-import { UnitsRequest, UnitsResponse } from 'src/model/units.model';
-import { WebResponse } from 'src/model/web.model';
+import { Body, Controller, Post } from '@nestjs/common';
+import { UnitsRequest, UnitsResponse } from '../model/units.model';
+import { WebResponse } from '../model/web.model';
 import { UnitsService } from './units.service';
 
-@Controller('/api/units')
+@Controller('/api/v1/units')
 export class UnitsController {
   constructor(private unitsService: UnitsService) {}
 
+  @Post()
   async create(
     @Body() request: UnitsRequest,
   ): Promise<WebResponse<UnitsResponse>> {
