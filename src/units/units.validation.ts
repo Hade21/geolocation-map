@@ -7,4 +7,11 @@ export class UnitsValidation {
     type: z.string().min(1).max(100),
     egi: z.string().min(1).max(100),
   });
+
+  static readonly UPDATE: ZodType = z.object({
+    id: z.string().min(1).max(100),
+    name: z.string().min(1).max(100).optional(),
+    type: z.string().min(1).max(100).optional(),
+    egi: z.string().min(1).max(100).optional(),
+  });
 }

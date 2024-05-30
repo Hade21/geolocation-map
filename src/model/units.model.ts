@@ -5,9 +5,16 @@ export class UnitsResponse {
   egi: string;
 }
 
-export class UnitsRequest {
+export class CreateUnitsRequest {
   id: string;
   name: string;
   type: string;
   egi: string;
+}
+
+export class UpdateUnitsRequest {
+  id: string;
+  name?: string;
+  type?: string;
+  egi?: string;
 }
