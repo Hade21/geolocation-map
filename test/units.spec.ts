@@ -97,7 +97,7 @@ describe('UnitsController', () => {
       expect(response.body).toBeDefined();
     });
 
-    it('should be able to update units', async () => {
+    it('should be able to update units name', async () => {
       await testService.deleteUnits();
       await testService.createUnits();
       const unit = await testService.getUnits();
@@ -105,8 +105,8 @@ describe('UnitsController', () => {
         .put(`/api/v1/units/${unit.id}`)
         .send({
           name: 'test update',
-          type: 'test update',
-          egi: 'test update',
+          type: 'test',
+          egi: 'test',
         });
 
       logger.info(response.body);
@@ -114,7 +114,49 @@ describe('UnitsController', () => {
       expect(response.status).toBe(200);
       expect(response.body.data.id).toBe('testId');
       expect(response.body.data.name).toBe('test update');
+      expect(response.body.data.type).toBe('test');
+      expect(response.body.data.egi).toBe('test');
+    });
+
+    it('should be able to update units type', async () => {
+      await testService.deleteUnits();
+      await testService.createUnits();
+      const unit = await testService.getUnits();
+      const response = await request(app.getHttpServer())
+        .put(`/api/v1/units/${unit.id}`)
+        .send({
+          name: 'test',
+          type: 'test update',
+          egi: 'test',
+        });
+
+      logger.info(response.body);
+
+      expect(response.status).toBe(200);
+      expect(response.body.data.id).toBe('testId');
+      expect(response.body.data.name).toBe('test');
       expect(response.body.data.type).toBe('test update');
+      expect(response.body.data.egi).toBe('test');
+    });
+
+    it('should be able to update units egi', async () => {
+      await testService.deleteUnits();
+      await testService.createUnits();
+      const unit = await testService.getUnits();
+      const response = await request(app.getHttpServer())
+        .put(`/api/v1/units/${unit.id}`)
+        .send({
+          name: 'test',
+          type: 'test',
+          egi: 'test update',
+        });
+
+      logger.info(response.body);
+
+      expect(response.status).toBe(200);
+      expect(response.body.data.id).toBe('testId');
+      expect(response.body.data.name).toBe('test');
+      expect(response.body.data.type).toBe('test');
       expect(response.body.data.egi).toBe('test update');
     });
 
