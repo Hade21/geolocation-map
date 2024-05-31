@@ -8,7 +8,7 @@ export class TestService {
   async deleteUnits() {
     return this.prismaService.unit.deleteMany({
       where: {
-        name: 'test',
+        id: 'testId',
       },
     });
   }

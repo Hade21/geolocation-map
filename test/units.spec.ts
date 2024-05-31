@@ -159,11 +159,11 @@ describe('UnitsController', () => {
       logger.info(response.body);
 
       expect(response.status).toBe(200);
-      expect(response.body.data.message).toBe('Unit deleted succesfuly');
+      expect(response.body.data.message).toBe('Unit deleted successfully');
 
       const unitsDeleted = await testService.getUnits();
 
-      expect(unitsDeleted).toBe({});
+      expect(unitsDeleted).toBeNull();
     });
   });
 });
