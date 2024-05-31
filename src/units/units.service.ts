@@ -1,6 +1,7 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { Unit } from '@prisma/client';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { v4 as uuid } from 'uuid';
 import { Logger } from 'winston';
 import { PrismaService } from '../common/prisma.service';
 import { ValidationService } from '../common/validation.service';
@@ -41,6 +42,7 @@ export class UnitsService {
   }
 
   async create(request: CreateUnitsRequest): Promise<UnitsResponse> {
+    let checkIdExist;
     this.logger.info(
       `UnitsService.create: new request create units ${JSON.stringify(request)}`,
     );
@@ -51,15 +53,26 @@ export class UnitsService {
 
     const checkUnitExist = await this.prismaService.unit.count({
       where: {
-        id: createRequest.id,
+        name: createRequest.name,
       },
     });
 
     if (checkUnitExist) throw new HttpException('Units already exist', 409);
 
+    do {
+      createRequest.id = uuid();
+      checkIdExist = await this.prismaService.unit.count({
+        where: {
+          id: createRequest.id,
+        },
+      });
+    } while (checkIdExist);
+
     const newUnits = await this.prismaService.unit.create({
       data: createRequest,
     });
+
+    console.log(newUnits);
 
     return this.toResponseBody(newUnits);
   }
