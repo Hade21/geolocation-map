@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { v4 as uuid } from 'uuid';
 import { PrismaService } from '../src/common/prisma.service';
 
 @Injectable()
@@ -8,7 +9,7 @@ export class TestService {
   async deleteUnits() {
     return this.prismaService.unit.deleteMany({
       where: {
-        id: 'testId',
+        name: 'test',
       },
     });
   }
@@ -16,7 +17,7 @@ export class TestService {
   async createUnits() {
     return this.prismaService.unit.create({
       data: {
-        id: 'testId',
+        id: uuid(),
         name: 'test',
         type: 'test',
         egi: 'test',
@@ -27,8 +28,12 @@ export class TestService {
   async getUnits() {
     return this.prismaService.unit.findFirst({
       where: {
-        id: 'testId',
+        name: 'test',
       },
     });
+  }
+
+  async deleteAllUnits() {
+    return this.prismaService.unit.deleteMany({});
   }
 }

@@ -46,7 +46,6 @@ describe('UnitsController', () => {
       const response = await request(app.getHttpServer())
         .post('/api/v1/units')
         .send({
-          id: 'testId',
           name: 'test',
           type: 'test',
           egi: 'test',
@@ -55,7 +54,7 @@ describe('UnitsController', () => {
       logger.info(response.body);
 
       expect(response.status).toBe(201);
-      expect(response.body.data.id).toBe('testId');
+      expect(response.body.data.id).toBeDefined();
       expect(response.body.data.name).toBe('test');
       expect(response.body.data.type).toBe('test');
       expect(response.body.data.egi).toBe('test');
@@ -79,8 +78,11 @@ describe('UnitsController', () => {
   });
 
   describe('PUT api/v1/units/:id', () => {
+    beforeEach(async () => {
+      await testService.deleteAllUnits();
+    });
+
     it('should be rejected if units not found', async () => {
-      await testService.deleteUnits();
       await testService.createUnits();
       const unit = await testService.getUnits();
       const response = await request(app.getHttpServer())
@@ -98,7 +100,6 @@ describe('UnitsController', () => {
     });
 
     it('should be able to update units name', async () => {
-      await testService.deleteUnits();
       await testService.createUnits();
       const unit = await testService.getUnits();
       const response = await request(app.getHttpServer())
@@ -112,14 +113,13 @@ describe('UnitsController', () => {
       logger.info(response.body);
 
       expect(response.status).toBe(200);
-      expect(response.body.data.id).toBe('testId');
+      expect(response.body.data.id).toBeDefined();
       expect(response.body.data.name).toBe('test update');
       expect(response.body.data.type).toBe('test');
       expect(response.body.data.egi).toBe('test');
     });
 
     it('should be able to update units type', async () => {
-      await testService.deleteUnits();
       await testService.createUnits();
       const unit = await testService.getUnits();
       const response = await request(app.getHttpServer())
@@ -133,14 +133,13 @@ describe('UnitsController', () => {
       logger.info(response.body);
 
       expect(response.status).toBe(200);
-      expect(response.body.data.id).toBe('testId');
+      expect(response.body.data.id).toBeDefined();
       expect(response.body.data.name).toBe('test');
       expect(response.body.data.type).toBe('test update');
       expect(response.body.data.egi).toBe('test');
     });
 
     it('should be able to update units egi', async () => {
-      await testService.deleteUnits();
       await testService.createUnits();
       const unit = await testService.getUnits();
       const response = await request(app.getHttpServer())
@@ -154,13 +153,14 @@ describe('UnitsController', () => {
       logger.info(response.body);
 
       expect(response.status).toBe(200);
-      expect(response.body.data.id).toBe('testId');
+      expect(response.body.data.id).toBeDefined();
       expect(response.body.data.name).toBe('test');
       expect(response.body.data.type).toBe('test');
       expect(response.body.data.egi).toBe('test update');
     });
 
     it('should be rejected if input field missing', async () => {
+      await testService.createUnits();
       const unit = await testService.getUnits();
       const response = await request(app.getHttpServer())
         .put(`/api/v1/units/${unit.id}`)
@@ -179,6 +179,7 @@ describe('UnitsController', () => {
 
   describe('DELETE api/v1/units/:id', () => {
     it('should be rejected if units not found', async () => {
+      await testService.createUnits();
       const unit = await testService.getUnits();
       const response = await request(app.getHttpServer()).delete(
         `/api/v1/units/${unit.id + 12}`,
