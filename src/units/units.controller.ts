@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post, Put } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
 import {
   CreateUnitsRequest,
   UnitsResponse,
@@ -27,5 +27,13 @@ export class UnitsController {
     request.id = unitId;
     const result = await this.unitsService.update(request);
     return { data: result };
+  }
+
+  @Delete('/:unitId')
+  async delete(
+    @Param('unitId') unitId: string,
+  ): Promise<WebResponse<{ message: string }>> {
+    await this.unitsService.delete(unitId);
+    return { data: { message: 'Unit deleted successfully' } };
   }
 }

@@ -87,4 +87,19 @@ export class UnitsService {
 
     return this.toResponseBody(unit);
   }
+
+  async delete(id: string): Promise<UnitsResponse> {
+    this.logger.info(
+      `UnitsService.delete: New request delete unit ${JSON.stringify(id)}`,
+    );
+    await this.checkUnitExist(id);
+
+    const unit = await this.prismaService.unit.delete({
+      where: {
+        id,
+      },
+    });
+
+    return this.toResponseBody(unit);
+  }
 }
