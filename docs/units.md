@@ -8,7 +8,6 @@ Request Body:
 
 ```json
 {
-  "id": "qwertyuiop",
   "name": "Example Name",
   "type": "Mobile Crane",
   "egi": "Tadano"
@@ -39,6 +38,19 @@ Status Code: 400
   "error": {
     "status": 400,
     "message": "Missing input fields"
+  }
+}
+```
+
+Response Body (Failed):
+
+Status Code: 409
+
+```json
+{
+  "error": {
+    "status": 409,
+    "message": "Units already exist"
   }
 }
 ```
