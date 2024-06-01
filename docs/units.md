@@ -8,7 +8,6 @@ Request Body:
 
 ```json
 {
-  "id": "qwertyuiop",
   "name": "Example Name",
   "type": "Mobile Crane",
   "egi": "Tadano"
