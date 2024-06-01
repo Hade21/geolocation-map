@@ -209,4 +209,20 @@ describe('UnitsController', () => {
       expect(unitsDeleted).toBeNull();
     });
   });
+
+  describe('GET api/v1/units/', () => {
+    it('should be able to get all units', async () => {
+      await testService.deleteUnits();
+      await testService.createUnits();
+      const response = await request(app.getHttpServer()).get(`/api/v1/units/`);
+
+      logger.info(response.body);
+
+      expect(response.status).toBe(200);
+      expect(response.body.data[0].id).toBeDefined();
+      expect(response.body.data[0].name).toBe('test');
+      expect(response.body.data[0].type).toBe('test');
+      expect(response.body.data[0].egi).toBe('test');
+    });
+  });
 });
