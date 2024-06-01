@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import {
   CreateUnitsRequest,
   UnitsResponse,
@@ -35,5 +43,11 @@ export class UnitsController {
   ): Promise<WebResponse<{ message: string }>> {
     await this.unitsService.delete(unitId);
     return { data: { message: 'Unit deleted successfully' } };
+  }
+
+  @Get()
+  async get(): Promise<WebResponse<UnitsResponse[]>> {
+    const result = await this.unitsService.get();
+    return { data: result };
   }
 }

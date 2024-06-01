@@ -72,8 +72,6 @@ export class UnitsService {
       data: createRequest,
     });
 
-    console.log(newUnits);
-
     return this.toResponseBody(newUnits);
   }
 
@@ -114,5 +112,13 @@ export class UnitsService {
     });
 
     return this.toResponseBody(unit);
+  }
+
+  async get(): Promise<UnitsResponse[]> {
+    this.logger.info(`UnitsService.get: New request get all units`);
+
+    const units = await this.prismaService.unit.findMany();
+
+    return units.map((unit) => this.toResponseBody(unit));
   }
 }
