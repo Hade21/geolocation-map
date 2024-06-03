@@ -36,4 +36,30 @@ export class TestService {
   async deleteAllUnits() {
     return this.prismaService.unit.deleteMany({});
   }
+
+  async deleteLocations() {
+    return this.prismaService.location.deleteMany({});
+  }
+
+  async addLocation() {
+    const unit = await this.prismaService.unit.findFirst({
+      where: {
+        name: 'test',
+      },
+    });
+    return this.prismaService.location.create({
+      data: {
+        long: 'test',
+        lat: 'test',
+        alt: 'test',
+        location: 'test',
+        dateTime: new Date().toISOString(),
+        units: {
+          connect: {
+            id: unit.id,
+          },
+        },
+      },
+    });
+  }
 }
