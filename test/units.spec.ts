@@ -42,6 +42,7 @@ describe('UnitsController', () => {
     });
 
     it('should be able to create new units', async () => {
+      await testService.deleteLocations();
       await testService.deleteUnits();
       const response = await request(app.getHttpServer())
         .post('/api/v1/units')
@@ -78,11 +79,9 @@ describe('UnitsController', () => {
   });
 
   describe('PUT api/v1/units/:id', () => {
-    beforeEach(async () => {
-      await testService.deleteAllUnits();
-    });
-
     it('should be rejected if units not found', async () => {
+      await testService.deleteLocations();
+      await testService.deleteAllUnits();
       await testService.createUnits();
       const unit = await testService.getUnits();
       const response = await request(app.getHttpServer())
@@ -100,6 +99,8 @@ describe('UnitsController', () => {
     });
 
     it('should be able to update units name', async () => {
+      await testService.deleteLocations();
+      await testService.deleteAllUnits();
       await testService.createUnits();
       const unit = await testService.getUnits();
       const response = await request(app.getHttpServer())
@@ -120,6 +121,8 @@ describe('UnitsController', () => {
     });
 
     it('should be able to update units type', async () => {
+      await testService.deleteLocations();
+      await testService.deleteAllUnits();
       await testService.createUnits();
       const unit = await testService.getUnits();
       const response = await request(app.getHttpServer())
@@ -140,6 +143,8 @@ describe('UnitsController', () => {
     });
 
     it('should be able to update units egi', async () => {
+      await testService.deleteLocations();
+      await testService.deleteAllUnits();
       await testService.createUnits();
       const unit = await testService.getUnits();
       const response = await request(app.getHttpServer())
@@ -160,6 +165,8 @@ describe('UnitsController', () => {
     });
 
     it('should be rejected if input field missing', async () => {
+      await testService.deleteLocations();
+      await testService.deleteAllUnits();
       await testService.createUnits();
       const unit = await testService.getUnits();
       const response = await request(app.getHttpServer())
@@ -192,6 +199,7 @@ describe('UnitsController', () => {
     });
 
     it('should be able to remove units', async () => {
+      await testService.deleteLocations();
       await testService.deleteUnits();
       await testService.createUnits();
       const unit = await testService.getUnits();
@@ -212,7 +220,8 @@ describe('UnitsController', () => {
 
   describe('GET api/v1/units/', () => {
     it('should be able to get all units', async () => {
-      await testService.deleteUnits();
+      await testService.deleteLocations();
+      await testService.deleteAllUnits();
       await testService.createUnits();
       const response = await request(app.getHttpServer()).get(`/api/v1/units/`);
 

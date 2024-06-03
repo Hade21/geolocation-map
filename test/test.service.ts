@@ -38,16 +38,7 @@ export class TestService {
   }
 
   async deleteLocations() {
-    const unit = await this.prismaService.unit.findFirst({
-      where: {
-        name: 'test',
-      },
-    });
-    return this.prismaService.location.deleteMany({
-      where: {
-        unitId: unit.id,
-      },
-    });
+    return this.prismaService.location.deleteMany({});
   }
 
   async addLocation() {
