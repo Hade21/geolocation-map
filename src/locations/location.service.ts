@@ -54,6 +54,9 @@ export class LocationService {
       where: {
         unitId,
       },
+      orderBy: {
+        dateTime: 'asc',
+      },
     });
 
     if (!locations) throw new HttpException('Locations not found', 404);
