@@ -50,9 +50,9 @@ Status Code: 400
 
 ## Get Location
 
-Endpoints: POST /api/units/:unitId/location/:locationId
+Endpoints: GET /api/units/:unitId/location
 
-Params: - unitId - locationId
+Params: - unitId
 
 Response Body (Success):
 
