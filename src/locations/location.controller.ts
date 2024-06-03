@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import {
   AddLocationRequest,
   LocationsResponse,
@@ -16,7 +16,15 @@ export class LocationController {
     @Body() request: AddLocationRequest,
   ): Promise<WebResponse<LocationsResponse>> {
     request.unitId = unitId;
-    const response = await this.locationsService.create(request);
-    return { data: response };
+    const result = await this.locationsService.create(request);
+    return { data: result };
+  }
+
+  @Get()
+  async get(
+    @Param('unitId') unitId: string,
+  ): Promise<WebResponse<LocationsResponse[]>> {
+    const result = await this.locationsService.get(unitId);
+    return { data: result };
   }
 }

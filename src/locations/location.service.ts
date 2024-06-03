@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { Location } from '@prisma/client';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
@@ -43,5 +43,21 @@ export class LocationService {
     });
 
     return this.toBodyResponse(newLocation);
+  }
+
+  async get(unitId: string): Promise<LocationsResponse[]> {
+    this.logger.info(
+      `LocationsService.get: new request get location from ${JSON.stringify(unitId)}`,
+    );
+
+    const locations = await this.prismaService.location.findMany({
+      where: {
+        unitId,
+      },
+    });
+
+    if (!locations) throw new HttpException('Locations not found', 404);
+
+    return locations.map((location) => this.toBodyResponse(location));
   }
 }
