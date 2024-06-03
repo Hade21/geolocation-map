@@ -62,7 +62,7 @@ export class TestService {
         lat: 'test',
         alt: 'test',
         location: 'test',
-        dateTime: 'test',
+        dateTime: new Date().toISOString(),
         units: {
           connect: {
             id: unit.id,

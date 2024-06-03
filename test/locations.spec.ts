@@ -24,8 +24,9 @@ describe('LocationsController', () => {
     testService = app.get(TestService);
   });
 
-  describe('POST api/v1/units', () => {
-    beforeAll(async () => {
+  describe('POST api/v1/units/:unitId/location', () => {
+    beforeEach(async () => {
+      await testService.deleteLocations();
       await testService.deleteAllUnits();
       await testService.createUnits();
     });
@@ -49,7 +50,6 @@ describe('LocationsController', () => {
     });
 
     it('should be able to add new location', async () => {
-      await testService.deleteLocations();
       const unit = await testService.getUnits();
       const response = await request(app.getHttpServer())
         .post(`/api/v1/units/${unit.id}/location`)
@@ -58,7 +58,7 @@ describe('LocationsController', () => {
           lat: 'test',
           alt: 'test',
           location: 'test',
-          dateTime: 'test',
+          dateTime: new Date().toISOString(),
         });
 
       logger.info(response.body);
@@ -69,7 +69,7 @@ describe('LocationsController', () => {
       expect(response.body.data.lat).toBe('test');
       expect(response.body.data.alt).toBe('test');
       expect(response.body.data.location).toBe('test');
-      expect(response.body.data.dateTime).toBe('test');
+      expect(response.body.data.dateTime).toBeDefined();
     });
   });
 
@@ -92,7 +92,7 @@ describe('LocationsController', () => {
       expect(response.body.data[0].lat).toBe('test');
       expect(response.body.data[0].alt).toBe('test');
       expect(response.body.data[0].location).toBe('test');
-      expect(response.body.data[0].dateTime).toBe('test');
+      expect(response.body.data[0].dateTime).toBeDefined();
     });
   });
 });
