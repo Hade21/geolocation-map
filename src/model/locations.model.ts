@@ -1,5 +1,5 @@
 export class LocationsResponse {
-  id: string;
+  id: number;
   long: string;
   lat: string;
   alt: string;
@@ -13,4 +13,5 @@ export class AddLocationRequest {
   alt: string;
   location: string;
   dateTime: Date;
+  unitId: string;
 }

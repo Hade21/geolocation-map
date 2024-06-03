@@ -6,7 +6,7 @@ export class LocationValidation {
     lat: z.string().min(1).max(100),
     alt: z.string().min(1).max(100),
     location: z.string().min(1).max(100),
-    dateTime: z.coerce.date(),
+    dateTime: z.string().min(5),
     unitId: z.string().min(1).max(100),
   });
 }
