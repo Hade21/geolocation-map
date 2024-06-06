@@ -13,11 +13,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id String @id
+  username String @unique @db.VarBit(100)
+  firstName String @db.VarChar(100)
+  lastName String @db.VarChar(100)
+  password String @db.VarChar(100)
+  role String @db.VarChar(50)
+
+  units Unit[]
+  locations Location[]
+
+  @@map("users")
+}
+
 model Unit {
-  id String @id @db.VarChar(100)
+  id String @id
   name String @db.VarChar(100)
   type String @db.VarChar(100)
   egi String @db.VarChar(100)
+  
+  createdBy String @db.VarChar(100)
+  users User @relation(fields: [createdBy], references: [id])
 
   locations Location[]
 
@@ -25,15 +42,18 @@ model Unit {
 }
 
 model Location{
-  id Int @id @default(autoincrement())
+  id String @id
   long String @db.VarChar(100)
   lat String @db.VarChar(100)
   alt String @db.VarChar(100)
   location String @db.VarChar(100)
   dateTime DateTime @db.Timestamp()
-  unitId String @db.VarChar(100)
 
+  unitId String @db.VarChar(100)
   units Unit @relation(fields: [unitId], references: [id])
+
+  createdBy String @db.VarChar(100)
+  users User @relation(fields: [createdBy], references: [id])
 
   @@map("locations")
 }
