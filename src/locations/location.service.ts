@@ -1,6 +1,7 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { Location } from '@prisma/client';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { v4 as uuid } from 'uuid';
 import { Logger } from 'winston';
 import { PrismaService } from '../common/prisma.service';
 import { ValidationService } from '../common/validation.service';
@@ -26,6 +27,7 @@ export class LocationService {
       alt: location.alt,
       location: location.location,
       dateTime: location.dateTime,
+      createdBy: location.createdBy,
     };
   }
 
@@ -38,8 +40,26 @@ export class LocationService {
       request,
     );
 
+    createRequest.id = uuid();
     const newLocation = await this.prismaService.location.create({
-      data: createRequest,
+      data: {
+        id: createRequest.id,
+        long: createRequest.long,
+        lat: createRequest.lat,
+        alt: createRequest.alt,
+        location: createRequest.location,
+        dateTime: createRequest.dateTime,
+        units: {
+          connect: {
+            id: createRequest.unitId,
+          },
+        },
+        users: {
+          connect: {
+            id: createRequest.createdBy,
+          },
+        },
+      },
     });
 
     return this.toBodyResponse(newLocation);
@@ -55,7 +75,7 @@ export class LocationService {
         unitId,
       },
       orderBy: {
-        dateTime: 'asc',
+        dateTime: 'desc',
       },
     });
 
