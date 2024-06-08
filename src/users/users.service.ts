@@ -32,6 +32,18 @@ export class UsersService {
     };
   }
 
+  async checkUserExist(username: string): Promise<User> {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        username,
+      },
+    });
+
+    if (user) throw new ConflictException('Username already exist');
+
+    return user;
+  }
+
   async create(request: CreateUserRequest): Promise<UsersResponse> {
     this.logger.info(
       `UsersService.create: New request create user ${JSON.stringify(request)}`,
@@ -44,13 +56,7 @@ export class UsersService {
     createRequest.id = uuid();
     createRequest.role = createRequest.role ?? 'user';
 
-    const checkUserExist = await this.prismaService.user.count({
-      where: {
-        username: createRequest.username,
-      },
-    });
-
-    if (checkUserExist) throw new ConflictException('Username already exist');
+    await this.checkUserExist(createRequest.username);
 
     const newUser = await this.prismaService.user.create({
       data: {
@@ -84,5 +90,15 @@ export class UsersService {
     }
 
     throw new UnauthorizedException('Invalid credentials');
+  }
+
+  async get(user: User): Promise<UsersResponse> {
+    const result = await this.prismaService.user.findUnique({
+      where: {
+        username: user.username,
+      },
+    });
+
+    return this.toResponseBody(result);
   }
 }

@@ -1,16 +1,15 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '@prisma/client';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import {
   CreateUserRequest,
   LoginResponse,
-  LoginUserRequest,
   UsersResponse,
 } from 'src/model/users.model';
 import { Logger } from 'winston';
 import { ValidationService } from '../common/validation.service';
 import { UsersService } from '../users/users.service';
-import { AuthValidation } from './auth.validation';
 
 @Injectable()
 export class AuthService {
@@ -26,19 +25,10 @@ export class AuthService {
     return result;
   }
 
-  async login(request: LoginUserRequest): Promise<LoginResponse> {
+  async login(user: User): Promise<LoginResponse> {
     this.logger.info(
-      `AuthService.login: New request login ${JSON.stringify(request)}`,
+      `AuthService.login: New request login ${JSON.stringify(user)}`,
     );
-
-    const loginRequest: LoginUserRequest = this.validationService.validate(
-      AuthValidation.LOGIN,
-      request,
-    );
-
-    const { username, password } = loginRequest;
-    const user = await this.userService.validateUser(username, password);
-
     const payload = {
       username: user.username,
       sub: {
