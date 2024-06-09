@@ -101,4 +101,27 @@ export class UsersService {
 
     return this.toResponseBody(result);
   }
+
+  async update(request: CreateUserRequest): Promise<UsersResponse> {
+    this.logger.info(
+      `UsersService.update: New request update user ${JSON.stringify(request)}`,
+    );
+    const updateRequest: CreateUserRequest = this.validationService.validate(
+      UserValidation.UPDATE,
+      request,
+    );
+
+    const userExist = this.checkUserExist(updateRequest.username);
+
+    if (!userExist) throw new HttpException('User not found', 404);
+
+    const user = await this.prismaService.user.update({
+      where: {
+        id: updateRequest.id,
+      },
+      data: updateRequest,
+    });
+
+    return this.toResponseBody(user);
+  }
 }
