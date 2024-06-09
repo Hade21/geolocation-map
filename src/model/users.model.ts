@@ -30,6 +30,7 @@ export class CreateUserRequest {
   username: string;
   firstName: string;
   lastName: string;
+  email: string;
   password: string;
   role: Role;
 }
