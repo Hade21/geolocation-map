@@ -19,7 +19,7 @@ model User {
   firstName String @db.VarChar(100)
   lastName String @db.VarChar(100)
   password String @db.VarChar(100)
-  role String @db.VarChar(50)
+  role Role @default(USER)
 
   units Unit[]
   locations Location[]
@@ -56,4 +56,9 @@ model Location{
   users User @relation(fields: [createdBy], references: [id])
 
   @@map("locations")
+}
+
+enum Role {
+  USER
+  ADMIN
 }

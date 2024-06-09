@@ -1,8 +1,8 @@
 # User API Spec
 
-## Add User
+## Register User
 
-Endpoints: POST /api/v1/users
+Endpoints: POST /api/v1/auth/register
 
 Request Body:
 
@@ -27,6 +27,46 @@ Status Code: 201
   "firstName": "Muhammad",
   "lastName": "Abdurrohman",
   "role": "admin"
+}
+```
+
+Response Body (Failed):
+
+Status Code: 400
+
+```json
+{
+  "error": {
+    "status": 400,
+    "message": "Missing input fields"
+  }
+}
+```
+
+## Login User
+
+Endpoints: POST /api/v1/auth/login
+
+Request Body:
+
+```json
+{
+  "username": "Hade21",
+  "password": "fakePassword"
+}
+```
+
+Response Body (Success):
+
+Status Code: 201
+
+```json
+{
+  "id": "uincibdnx",
+  "username": "Hade21",
+  "firstName": "Muhammad",
+  "lastName": "Abdurrohman",
+  "token": { "accessToken": "iuhibveksvn", "refreshToken": "smfnvjhfhabkcsb" }
 }
 ```
 

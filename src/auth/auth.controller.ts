@@ -2,6 +2,7 @@ import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
 import {
   CreateUserRequest,
   RefreshResponse,
+  RequestWithUser,
   UsersResponse,
 } from '../model/users.model';
 import { WebResponse } from '../model/web.model';
@@ -23,14 +24,18 @@ export class AuthController {
 
   @UseGuards(LocalAuthGuard)
   @Post('login')
-  async login(@Request() req): Promise<WebResponse<UsersResponse>> {
+  async login(
+    @Request() req: RequestWithUser,
+  ): Promise<WebResponse<UsersResponse>> {
     const result = await this.authService.login(req.user);
     return { data: result };
   }
 
   @UseGuards(RefreshJwtAuthGuard)
   @Post('refresh')
-  async refresh(@Request() req): Promise<WebResponse<RefreshResponse>> {
+  async refresh(
+    @Request() req: RequestWithUser,
+  ): Promise<WebResponse<RefreshResponse>> {
     const result = await this.authService.refresh(req.user);
     return { data: result };
   }

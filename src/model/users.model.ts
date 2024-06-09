@@ -1,3 +1,6 @@
+import { Role, User } from '@prisma/client';
+import { Request } from 'express';
+
 export class UsersResponse {
   id: string;
   username: string;
@@ -28,10 +31,21 @@ export class CreateUserRequest {
   firstName: string;
   lastName: string;
   password: string;
-  role: string;
+  role: Role;
 }
 
 export class LoginUserRequest {
   username: string;
   password: string;
+}
+
+export class Payload {
+  username: string;
+  sub: {
+    name: string;
+  };
+}
+
+export class RequestWithUser extends Request {
+  user?: User;
 }

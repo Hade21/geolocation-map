@@ -54,7 +54,7 @@ export class UsersService {
     );
 
     createRequest.id = uuid();
-    createRequest.role = createRequest.role ?? 'user';
+    createRequest.role = createRequest.role ?? 'USER';
 
     await this.checkUserExist(createRequest.username);
 

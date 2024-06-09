@@ -2,14 +2,15 @@ import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { Logger } from 'winston';
+import { ValidationService } from '../common/validation.service';
 import {
   CreateUserRequest,
   LoginResponse,
+  Payload,
   RefreshResponse,
   UsersResponse,
-} from 'src/model/users.model';
-import { Logger } from 'winston';
-import { ValidationService } from '../common/validation.service';
+} from '../model/users.model';
 import { UsersService } from '../users/users.service';
 
 @Injectable()
@@ -30,7 +31,7 @@ export class AuthService {
     this.logger.info(
       `AuthService.login: New request login ${JSON.stringify(user)}`,
     );
-    const payload = {
+    const payload: Payload = {
       username: user.username,
       sub: {
         name: `${user.firstName} ${user.lastName}`,
@@ -51,7 +52,7 @@ export class AuthService {
       `AuthService.refersh: New request refersh ${JSON.stringify(user)}`,
     );
 
-    const payload = {
+    const payload: Payload = {
       username: user.username,
       sub: {
         name: `${user.firstName} ${user.lastName}`,
@@ -59,6 +60,7 @@ export class AuthService {
     };
 
     return {
+      ...user,
       token: {
         accessToken: this.jwtService.sign(payload),
       },
