@@ -5,6 +5,7 @@ import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import {
   CreateUserRequest,
   LoginResponse,
+  RefreshResponse,
   UsersResponse,
 } from 'src/model/users.model';
 import { Logger } from 'winston';
@@ -38,7 +39,29 @@ export class AuthService {
 
     return {
       ...user,
-      token: { accessToken: this.jwtService.sign(payload) },
+      token: {
+        accessToken: this.jwtService.sign(payload),
+        refreshToken: this.jwtService.sign(payload, { expiresIn: '1d' }),
+      },
+    };
+  }
+
+  async refresh(user: User): Promise<RefreshResponse> {
+    this.logger.info(
+      `AuthService.refersh: New request refersh ${JSON.stringify(user)}`,
+    );
+
+    const payload = {
+      username: user.username,
+      sub: {
+        name: `${user.firstName} ${user.lastName}`,
+      },
+    };
+
+    return {
+      token: {
+        accessToken: this.jwtService.sign(payload),
+      },
     };
   }
 }

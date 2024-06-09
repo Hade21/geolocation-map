@@ -5,8 +5,10 @@ import { UsersService } from '../users/users.service';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtAuthGuard } from './guard/jwt-auth.guard';
+import { RefreshJwtAuthGuard } from './guard/refresh-jwt-auth.guard';
 import { JwtStrategy } from './strategy/jwt-strategy';
 import { LocalStrategy } from './strategy/local-strategy';
+import { RefreshJwtStrategy } from './strategy/refreshToken-strategy';
 
 @Module({
   imports: [
@@ -22,6 +24,8 @@ import { LocalStrategy } from './strategy/local-strategy';
     JwtStrategy,
     LocalStrategy,
     JwtAuthGuard,
+    RefreshJwtStrategy,
+    RefreshJwtAuthGuard,
   ],
   controllers: [AuthController],
   exports: [JwtAuthGuard],

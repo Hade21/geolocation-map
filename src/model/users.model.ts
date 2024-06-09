@@ -12,6 +12,13 @@ export class LoginResponse extends UsersResponse {
   lastName: string;
   token: {
     accessToken: string;
+    refreshToken: string;
+  };
+}
+
+export class RefreshResponse {
+  token: {
+    accessToken: string;
   };
 }
 
