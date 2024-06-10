@@ -198,7 +198,7 @@ Request Body:
 
 ```json
 {
-    "role": "users" || "guests"
+    "role": "users" || "admin"
 }
 ```
 
