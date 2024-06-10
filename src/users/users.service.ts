@@ -132,7 +132,6 @@ export class UsersService {
     this.logger.info(
       `UsersService.remove: New request remove user ${JSON.stringify(id)}`,
     );
-    console.log(user);
 
     const userExist = this.checkUserExist(user.username);
 
