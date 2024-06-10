@@ -40,6 +40,29 @@ export class LocationService {
       request,
     );
 
+    const count = await this.prismaService.location.count({
+      where: {
+        unitId: createRequest.unitId,
+      },
+    });
+
+    if (count >= 5) {
+      const locations = await this.prismaService.location.findMany({
+        where: {
+          unitId: createRequest.unitId,
+        },
+        orderBy: {
+          dateTime: 'desc',
+        },
+      });
+
+      await this.prismaService.location.delete({
+        where: {
+          id: locations[4].id,
+        },
+      });
+    }
+
     createRequest.id = uuid();
     const newLocation = await this.prismaService.location.create({
       data: {
@@ -77,6 +100,7 @@ export class LocationService {
       orderBy: {
         dateTime: 'desc',
       },
+      take: 5,
     });
 
     if (!locations) throw new HttpException('Locations not found', 404);
