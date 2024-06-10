@@ -6,13 +6,12 @@ export class UsersResponse {
   username: string;
   firstName: string;
   lastName: string;
+  email: string;
 }
 
 export class LoginResponse extends UsersResponse {
   id: string;
   username: string;
-  firstName: string;
-  lastName: string;
   token: {
     accessToken: string;
     refreshToken: string;
