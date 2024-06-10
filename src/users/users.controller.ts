@@ -7,9 +7,9 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
-import { CreateUserRequest, UsersResponse } from 'src/model/users.model';
-import { WebResponse } from 'src/model/web.model';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
+import { CreateUserRequest, UsersResponse } from '../model/users.model';
+import { WebResponse } from '../model/web.model';
 import { UsersService } from './users.service';
 
 @Controller('/api/v1/users')

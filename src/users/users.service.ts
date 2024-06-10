@@ -8,11 +8,11 @@ import {
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
-import { PrismaService } from 'src/common/prisma.service';
-import { ValidationService } from 'src/common/validation.service';
-import { CreateUserRequest, UsersResponse } from 'src/model/users.model';
 import { v4 as uuid } from 'uuid';
 import { Logger } from 'winston';
+import { PrismaService } from '../common/prisma.service';
+import { ValidationService } from '../common/validation.service';
+import { CreateUserRequest, UsersResponse } from '../model/users.model';
 import { UserValidation } from './users.validation';
 
 @Injectable()
@@ -29,6 +29,7 @@ export class UsersService {
       firstName: user.firstName,
       lastName: user.lastName,
       username: user.username,
+      email: user.email,
     };
   }
 
