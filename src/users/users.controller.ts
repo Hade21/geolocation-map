@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Put,
   Request,
   UseGuards,
@@ -48,6 +49,16 @@ export class UsersController {
     @Param('id') id: string,
   ): Promise<WebResponse<UsersResponse>> {
     const result = await this.usersService.remove(id, req.user);
+    return { data: result };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Patch('/:id')
+  async changeRole(
+    @Param('id') id: string,
+    @Request() req: RequestWithUser,
+  ): Promise<WebResponse<UsersResponse>> {
+    const result = await this.usersService.changeRole(id, req.user);
     return { data: result };
   }
 }

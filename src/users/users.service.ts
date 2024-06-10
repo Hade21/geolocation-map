@@ -154,4 +154,40 @@ export class UsersService {
 
     return this.toResponseBody(deletedUser);
   }
+
+  async changeRole(id: string, user: User): Promise<UsersResponse> {
+    this.logger.info(
+      `UsersService.changeRole: New request change role user ${JSON.stringify(id)}`,
+    );
+
+    const isAdmin = await this.prismaService.user.findFirst({
+      where: {
+        username: user.username,
+      },
+    });
+    const userExist = await this.prismaService.user.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (!userExist) throw new HttpException('User not found', 404);
+
+    if (isAdmin.role !== 'ADMIN')
+      throw new UnauthorizedException('Only admin can change role');
+
+    const updatedUser = await this.prismaService.user.update({
+      where: {
+        id,
+      },
+      data: {
+        role: 'ADMIN',
+      },
+    });
+
+    return {
+      ...this.toResponseBody(updatedUser),
+      role: updatedUser.role,
+    };
+  }
 }

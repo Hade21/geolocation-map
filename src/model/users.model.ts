@@ -7,6 +7,7 @@ export class UsersResponse {
   firstName: string;
   lastName: string;
   email: string;
+  role?: string;
 }
 
 export class LoginResponse extends UsersResponse {
