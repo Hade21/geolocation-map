@@ -86,22 +86,19 @@ describe('UserController', () => {
     });
   });
 
-  describe('GET /api/v1/users/:id', () => {
+  describe('GET /api/v1/users', () => {
     it(`Should be rejected if token is missing`, async () => {
       await testService.deleteLocations();
       await testService.deleteAllUnits();
       await testService.deleteUsers();
       await testService.addUser();
-      const user = await testService.getUsers();
-      const response = await request(app.getHttpServer()).get(
-        `/api/v1/users/${user.id}`,
-      );
+      const response = await request(app.getHttpServer()).get(`/api/v1/users`);
 
       logger.info(response.body);
 
       expect(response.status).toBe(401);
       expect(response.body).toBeDefined();
-      expect(response.body.message).toBe('Unauthorized');
+      expect(response.body.errors.message).toBe('Unauthorized');
     });
 
     it(`Should be able to get user`, async () => {
@@ -109,7 +106,6 @@ describe('UserController', () => {
       await testService.deleteAllUnits();
       await testService.deleteUsers();
       await testService.addUser();
-      const user = await testService.getUsers();
       const token = await request(app.getHttpServer())
         .post('/api/v1/auth/login')
         .send({
@@ -117,7 +113,7 @@ describe('UserController', () => {
           password: 'test',
         });
       const response = await request(app.getHttpServer())
-        .get(`/api/v1/users/${user.id}`)
+        .get(`/api/v1/users`)
         .set('Authorization', `Bearer ${token.body.data.token.accessToken}`);
 
       logger.info(response.body);
@@ -175,14 +171,14 @@ describe('UserController', () => {
       expect(response.body.data.username).toBe('test');
 
       const response2 = await request(app.getHttpServer())
-        .get(`/api/v1/users/${user.id}`)
+        .get(`/api/v1/users`)
         .set('Authorization', `Bearer ${token.body.data.token.accessToken}`);
 
       logger.info(response2.body);
 
       expect(response2.status).toBe(404);
       expect(response2.body).toBeDefined();
-      expect(response2.body.errors.message).toBe('User not found');
+      expect(response2.body.errors).toBe('User not found');
     });
   });
 });
