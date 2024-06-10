@@ -6,7 +6,9 @@ import {
   Param,
   Post,
   Put,
+  UseGuards,
 } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import {
   CreateUnitsRequest,
   UnitsResponse,
@@ -19,6 +21,7 @@ import { UnitsService } from './units.service';
 export class UnitsController {
   constructor(private unitsService: UnitsService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   async create(
     @Body() request: CreateUnitsRequest,
@@ -27,6 +30,7 @@ export class UnitsController {
     return { data: result };
   }
 
+  @UseGuards(JwtAuthGuard)
   @Put('/:unitId')
   async update(
     @Param('unitId') unitId: string,
@@ -37,6 +41,7 @@ export class UnitsController {
     return { data: result };
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete('/:unitId')
   async delete(
     @Param('unitId') unitId: string,

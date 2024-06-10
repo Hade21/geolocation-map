@@ -61,6 +61,9 @@ export class UnitsService {
 
     do {
       createRequest.id = uuid();
+      createRequest.name = createRequest.name.toUpperCase();
+      createRequest.egi = createRequest.egi.toUpperCase();
+      createRequest.type = createRequest.type.toUpperCase();
       checkIdExist = await this.prismaService.unit.count({
         where: {
           id: createRequest.id,
@@ -89,6 +92,9 @@ export class UnitsService {
     if (!updateRequest.name && !updateRequest.egi && !updateRequest.type)
       throw new HttpException('Missing input fields', 400);
 
+    updateRequest.name = updateRequest.name.toUpperCase();
+    updateRequest.egi = updateRequest.egi.toUpperCase();
+    updateRequest.type = updateRequest.type.toUpperCase();
     unit = await this.prismaService.unit.update({
       where: {
         id: updateRequest.id,
