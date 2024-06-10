@@ -1,6 +1,7 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { Location } from '@prisma/client';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { v4 as uuid } from 'uuid';
 import { Logger } from 'winston';
 import { PrismaService } from '../common/prisma.service';
 import { ValidationService } from '../common/validation.service';
@@ -26,6 +27,7 @@ export class LocationService {
       alt: location.alt,
       location: location.location,
       dateTime: location.dateTime,
+      createdBy: location.createdBy,
     };
   }
 
@@ -38,8 +40,49 @@ export class LocationService {
       request,
     );
 
+    const count = await this.prismaService.location.count({
+      where: {
+        unitId: createRequest.unitId,
+      },
+    });
+
+    if (count >= 5) {
+      const locations = await this.prismaService.location.findMany({
+        where: {
+          unitId: createRequest.unitId,
+        },
+        orderBy: {
+          dateTime: 'desc',
+        },
+      });
+
+      await this.prismaService.location.delete({
+        where: {
+          id: locations[4].id,
+        },
+      });
+    }
+
+    createRequest.id = uuid();
     const newLocation = await this.prismaService.location.create({
-      data: createRequest,
+      data: {
+        id: createRequest.id,
+        long: createRequest.long,
+        lat: createRequest.lat,
+        alt: createRequest.alt,
+        location: createRequest.location,
+        dateTime: createRequest.dateTime,
+        units: {
+          connect: {
+            id: createRequest.unitId,
+          },
+        },
+        users: {
+          connect: {
+            id: createRequest.createdBy,
+          },
+        },
+      },
     });
 
     return this.toBodyResponse(newLocation);
@@ -55,8 +98,9 @@ export class LocationService {
         unitId,
       },
       orderBy: {
-        dateTime: 'asc',
+        dateTime: 'desc',
       },
+      take: 5,
     });
 
     if (!locations) throw new HttpException('Locations not found', 404);

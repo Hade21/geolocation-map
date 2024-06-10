@@ -8,5 +8,6 @@ export class LocationValidation {
     location: z.string().min(1).max(100),
     dateTime: z.string().min(5),
     unitId: z.string().min(1).max(100),
+    createdBy: z.string().min(1).max(100),
   });
 }

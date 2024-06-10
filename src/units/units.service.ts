@@ -42,7 +42,7 @@ export class UnitsService {
   }
 
   async create(request: CreateUnitsRequest): Promise<UnitsResponse> {
-    let checkIdExist;
+    let checkIdExist: number;
     this.logger.info(
       `UnitsService.create: new request create units ${JSON.stringify(request)}`,
     );
@@ -50,6 +50,10 @@ export class UnitsService {
       UnitsValidation.CREATE,
       request,
     );
+
+    createRequest.name = createRequest.name.toUpperCase();
+    createRequest.egi = createRequest.egi.toUpperCase();
+    createRequest.type = createRequest.type.toUpperCase();
 
     const checkUnitExist = await this.prismaService.unit.count({
       where: {
@@ -89,6 +93,9 @@ export class UnitsService {
     if (!updateRequest.name && !updateRequest.egi && !updateRequest.type)
       throw new HttpException('Missing input fields', 400);
 
+    updateRequest.name = updateRequest.name.toUpperCase();
+    updateRequest.egi = updateRequest.egi.toUpperCase();
+    updateRequest.type = updateRequest.type.toUpperCase();
     unit = await this.prismaService.unit.update({
       where: {
         id: updateRequest.id,

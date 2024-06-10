@@ -10,6 +10,7 @@ export class CreateUnitsRequest {
   name: string;
   type: string;
   egi: string;
+  createdBy: string;
 }
 
 export class UpdateUnitsRequest {

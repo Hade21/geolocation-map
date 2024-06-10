@@ -26,13 +26,25 @@ describe('UnitsController', () => {
 
   describe('POST api/v1/units', () => {
     it('should be rejected if input field wrong', async () => {
+      await testService.deleteLocations();
+      await testService.deleteUnits();
+      await testService.deleteUsers();
+      await testService.addUser();
+      const token = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          username: 'test',
+          password: 'test',
+        });
       const response = await request(app.getHttpServer())
         .post('/api/v1/units')
+        .set('Authorization', `Bearer ${token.body.data.token.accessToken}`)
         .send({
           id: '',
           name: '',
           type: '',
           egi: '',
+          createdBy: '',
         });
 
       logger.info(response.body);
@@ -44,31 +56,49 @@ describe('UnitsController', () => {
     it('should be able to create new units', async () => {
       await testService.deleteLocations();
       await testService.deleteUnits();
+      await testService.deleteUsers();
+      const user = await testService.addUser();
+      const token = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          username: 'test',
+          password: 'test',
+        });
       const response = await request(app.getHttpServer())
         .post('/api/v1/units')
+        .set('Authorization', `Bearer ${token.body.data.token.accessToken}`)
         .send({
           name: 'test',
           type: 'test',
           egi: 'test',
+          createdBy: user.id,
         });
 
       logger.info(response.body);
 
       expect(response.status).toBe(201);
       expect(response.body.data.id).toBeDefined();
-      expect(response.body.data.name).toBe('test');
-      expect(response.body.data.type).toBe('test');
-      expect(response.body.data.egi).toBe('test');
+      expect(response.body.data.name).toBe('TEST');
+      expect(response.body.data.type).toBe('TEST');
+      expect(response.body.data.egi).toBe('TEST');
     });
 
     it('should be rejected if units already exist', async () => {
+      const user = await testService.getUsers();
+      const token = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          username: 'test',
+          password: 'test',
+        });
       const response = await request(app.getHttpServer())
         .post('/api/v1/units')
+        .set('Authorization', `Bearer ${token.body.data.token.accessToken}`)
         .send({
-          id: 'testId',
           name: 'test',
           type: 'test',
           egi: 'test',
+          createdBy: user.id,
         });
 
       logger.info(response.body);
@@ -83,13 +113,22 @@ describe('UnitsController', () => {
       await testService.deleteLocations();
       await testService.deleteAllUnits();
       await testService.createUnits();
+      const user = await testService.getUsers();
       const unit = await testService.getUnits();
+      const token = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          username: 'test',
+          password: 'test',
+        });
       const response = await request(app.getHttpServer())
         .put(`/api/v1/units/${unit.id + '12'}`)
+        .set('Authorization', `Bearer ${token.body.data.token.accessToken}`)
         .send({
           name: 'unit update',
           type: 'unit update',
           egi: 'unit update',
+          createdBy: user.id,
         });
 
       logger.info(response.body);
@@ -103,8 +142,15 @@ describe('UnitsController', () => {
       await testService.deleteAllUnits();
       await testService.createUnits();
       const unit = await testService.getUnits();
+      const token = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          username: 'test',
+          password: 'test',
+        });
       const response = await request(app.getHttpServer())
         .put(`/api/v1/units/${unit.id}`)
+        .set('Authorization', `Bearer ${token.body.data.token.accessToken}`)
         .send({
           name: 'test update',
           type: 'test',
@@ -115,9 +161,9 @@ describe('UnitsController', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.data.id).toBeDefined();
-      expect(response.body.data.name).toBe('test update');
-      expect(response.body.data.type).toBe('test');
-      expect(response.body.data.egi).toBe('test');
+      expect(response.body.data.name).toBe('TEST UPDATE');
+      expect(response.body.data.type).toBe('TEST');
+      expect(response.body.data.egi).toBe('TEST');
     });
 
     it('should be able to update units type', async () => {
@@ -125,8 +171,15 @@ describe('UnitsController', () => {
       await testService.deleteAllUnits();
       await testService.createUnits();
       const unit = await testService.getUnits();
+      const token = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          username: 'test',
+          password: 'test',
+        });
       const response = await request(app.getHttpServer())
         .put(`/api/v1/units/${unit.id}`)
+        .set('Authorization', `Bearer ${token.body.data.token.accessToken}`)
         .send({
           name: 'test',
           type: 'test update',
@@ -137,9 +190,9 @@ describe('UnitsController', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.data.id).toBeDefined();
-      expect(response.body.data.name).toBe('test');
-      expect(response.body.data.type).toBe('test update');
-      expect(response.body.data.egi).toBe('test');
+      expect(response.body.data.name).toBe('TEST');
+      expect(response.body.data.type).toBe('TEST UPDATE');
+      expect(response.body.data.egi).toBe('TEST');
     });
 
     it('should be able to update units egi', async () => {
@@ -147,8 +200,15 @@ describe('UnitsController', () => {
       await testService.deleteAllUnits();
       await testService.createUnits();
       const unit = await testService.getUnits();
+      const token = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          username: 'test',
+          password: 'test',
+        });
       const response = await request(app.getHttpServer())
         .put(`/api/v1/units/${unit.id}`)
+        .set('Authorization', `Bearer ${token.body.data.token.accessToken}`)
         .send({
           name: 'test',
           type: 'test',
@@ -159,9 +219,9 @@ describe('UnitsController', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.data.id).toBeDefined();
-      expect(response.body.data.name).toBe('test');
-      expect(response.body.data.type).toBe('test');
-      expect(response.body.data.egi).toBe('test update');
+      expect(response.body.data.name).toBe('TEST');
+      expect(response.body.data.type).toBe('TEST');
+      expect(response.body.data.egi).toBe('TEST UPDATE');
     });
 
     it('should be rejected if input field missing', async () => {
@@ -169,8 +229,15 @@ describe('UnitsController', () => {
       await testService.deleteAllUnits();
       await testService.createUnits();
       const unit = await testService.getUnits();
+      const token = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          username: 'test',
+          password: 'test',
+        });
       const response = await request(app.getHttpServer())
         .put(`/api/v1/units/${unit.id}`)
+        .set('Authorization', `Bearer ${token.body.data.token.accessToken}`)
         .send({
           name: '',
           type: '',
@@ -188,9 +255,15 @@ describe('UnitsController', () => {
     it('should be rejected if units not found', async () => {
       await testService.createUnits();
       const unit = await testService.getUnits();
-      const response = await request(app.getHttpServer()).delete(
-        `/api/v1/units/${unit.id + 12}`,
-      );
+      const token = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          username: 'test',
+          password: 'test',
+        });
+      const response = await request(app.getHttpServer())
+        .delete(`/api/v1/units/${unit.id + 12}`)
+        .set('Authorization', `Bearer ${token.body.data.token.accessToken}`);
 
       logger.info(response.body);
 
@@ -203,18 +276,27 @@ describe('UnitsController', () => {
       await testService.deleteUnits();
       await testService.createUnits();
       const unit = await testService.getUnits();
-      const response = await request(app.getHttpServer()).delete(
-        `/api/v1/units/${unit.id}`,
-      );
+      const token = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          username: 'test',
+          password: 'test',
+        });
+      const response = await request(app.getHttpServer())
+        .delete(`/api/v1/units/${unit.id}`)
+        .set('Authorization', `Bearer ${token.body.data.token.accessToken}`);
 
       logger.info(response.body);
 
       expect(response.status).toBe(200);
       expect(response.body.data.message).toBe('Unit deleted successfully');
 
-      const unitsDeleted = await testService.getUnits();
+      const unitsDeleted = await request(app.getHttpServer()).get(
+        `/api/v1/units/${unit.id}`,
+      );
 
-      expect(unitsDeleted).toBeNull();
+      expect(unitsDeleted.status).toBe(404);
+      expect(unitsDeleted.body).toBeDefined();
     });
   });
 
@@ -229,9 +311,9 @@ describe('UnitsController', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.data[0].id).toBeDefined();
-      expect(response.body.data[0].name).toBe('test');
-      expect(response.body.data[0].type).toBe('test');
-      expect(response.body.data[0].egi).toBe('test');
+      expect(response.body.data[0].name).toBe('TEST');
+      expect(response.body.data[0].type).toBe('TEST');
+      expect(response.body.data[0].egi).toBe('TEST');
     });
   });
 });

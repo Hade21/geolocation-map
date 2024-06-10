@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import {
   AddLocationRequest,
   LocationsResponse,
@@ -10,6 +11,7 @@ import { LocationService } from './location.service';
 export class LocationController {
   constructor(private locationsService: LocationService) {}
 
+  @UseGuards(JwtAuthGuard)
   @Post()
   async create(
     @Param('unitId') unitId: string,
