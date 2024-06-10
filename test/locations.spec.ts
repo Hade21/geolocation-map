@@ -33,6 +33,7 @@ describe('LocationsController', () => {
 
     it('should be rejected if input field wrong', async () => {
       const unit = await testService.getUnits();
+      const user = await testService.getUsers();
       const response = await request(app.getHttpServer())
         .post(`/api/v1/units/${unit.id}/location`)
         .send({
@@ -41,6 +42,7 @@ describe('LocationsController', () => {
           alt: '',
           location: '',
           dateTime: '',
+          createdBy: user.id,
         });
 
       logger.info(response.body);
@@ -51,6 +53,7 @@ describe('LocationsController', () => {
 
     it('should be able to add new location', async () => {
       const unit = await testService.getUnits();
+      const user = await testService.getUsers();
       const response = await request(app.getHttpServer())
         .post(`/api/v1/units/${unit.id}/location`)
         .send({
@@ -59,6 +62,7 @@ describe('LocationsController', () => {
           alt: 'test',
           location: 'test',
           dateTime: new Date().toISOString(),
+          createdBy: user.id,
         });
 
       logger.info(response.body);
@@ -93,6 +97,7 @@ describe('LocationsController', () => {
       expect(response.body.data[0].alt).toBe('test');
       expect(response.body.data[0].location).toBe('test');
       expect(response.body.data[0].dateTime).toBeDefined();
+      expect(response.body.data[0].createdBy).toBeDefined();
     });
   });
 });

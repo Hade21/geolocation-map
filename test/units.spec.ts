@@ -33,6 +33,7 @@ describe('UnitsController', () => {
           name: '',
           type: '',
           egi: '',
+          createdBy: '',
         });
 
       logger.info(response.body);
@@ -44,12 +45,15 @@ describe('UnitsController', () => {
     it('should be able to create new units', async () => {
       await testService.deleteLocations();
       await testService.deleteUnits();
+      await testService.deleteUsers();
+      const user = await testService.addUser();
       const response = await request(app.getHttpServer())
         .post('/api/v1/units')
         .send({
           name: 'test',
           type: 'test',
           egi: 'test',
+          createdBy: user.id,
         });
 
       logger.info(response.body);
@@ -62,6 +66,7 @@ describe('UnitsController', () => {
     });
 
     it('should be rejected if units already exist', async () => {
+      const user = await testService.getUsers();
       const response = await request(app.getHttpServer())
         .post('/api/v1/units')
         .send({
@@ -69,6 +74,7 @@ describe('UnitsController', () => {
           name: 'test',
           type: 'test',
           egi: 'test',
+          createdBy: user.id,
         });
 
       logger.info(response.body);
@@ -83,6 +89,7 @@ describe('UnitsController', () => {
       await testService.deleteLocations();
       await testService.deleteAllUnits();
       await testService.createUnits();
+      const user = await testService.getUsers();
       const unit = await testService.getUnits();
       const response = await request(app.getHttpServer())
         .put(`/api/v1/units/${unit.id + '12'}`)
@@ -90,6 +97,7 @@ describe('UnitsController', () => {
           name: 'unit update',
           type: 'unit update',
           egi: 'unit update',
+          createdBy: user.id,
         });
 
       logger.info(response.body);

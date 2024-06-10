@@ -1,10 +1,41 @@
 import { Injectable } from '@nestjs/common';
+import { hash } from 'bcrypt';
 import { v4 as uuid } from 'uuid';
 import { PrismaService } from '../src/common/prisma.service';
 
 @Injectable()
 export class TestService {
   constructor(private prismaService: PrismaService) {}
+
+  async deleteUsers() {
+    return this.prismaService.user.deleteMany({
+      where: {
+        username: 'test',
+      },
+    });
+  }
+
+  async addUser() {
+    return this.prismaService.user.create({
+      data: {
+        id: uuid(),
+        username: 'test',
+        firstName: 'test',
+        lastName: 'test',
+        role: 'USER',
+        email: 'test',
+        password: await hash('test', 10),
+      },
+    });
+  }
+
+  async getUsers() {
+    return this.prismaService.user.findFirst({
+      where: {
+        username: 'test',
+      },
+    });
+  }
 
   async deleteUnits() {
     return this.prismaService.unit.deleteMany({
@@ -15,12 +46,22 @@ export class TestService {
   }
 
   async createUnits() {
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        username: 'test',
+      },
+    });
     return this.prismaService.unit.create({
       data: {
         id: uuid(),
         name: 'test',
         type: 'test',
         egi: 'test',
+        users: {
+          connect: {
+            id: user.id,
+          },
+        },
       },
     });
   }
@@ -47,8 +88,14 @@ export class TestService {
         name: 'test',
       },
     });
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        username: 'test',
+      },
+    });
     return this.prismaService.location.create({
       data: {
+        id: uuid(),
         long: 'test',
         lat: 'test',
         alt: 'test',
@@ -57,6 +104,11 @@ export class TestService {
         units: {
           connect: {
             id: unit.id,
+          },
+        },
+        users: {
+          connect: {
+            id: user.id,
           },
         },
       },
