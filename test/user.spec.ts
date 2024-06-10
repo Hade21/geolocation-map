@@ -182,7 +182,7 @@ describe('UserController', () => {
 
       expect(response2.status).toBe(404);
       expect(response2.body).toBeDefined();
-      expect(response2.body.message).toBe('User not found');
+      expect(response2.body.errors.message).toBe('User not found');
     });
   });
 });

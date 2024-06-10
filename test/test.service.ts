@@ -19,7 +19,7 @@ export class TestService {
         firstName: 'test',
         lastName: 'test',
         role: 'USER',
-        email: 'test',
+        email: 'test@mail.com',
         password: await hash('test', 10),
       },
     });
