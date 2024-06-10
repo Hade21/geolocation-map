@@ -42,7 +42,7 @@ export class UnitsService {
   }
 
   async create(request: CreateUnitsRequest): Promise<UnitsResponse> {
-    let checkIdExist;
+    let checkIdExist: number;
     this.logger.info(
       `UnitsService.create: new request create units ${JSON.stringify(request)}`,
     );

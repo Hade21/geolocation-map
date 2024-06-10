@@ -5,7 +5,7 @@ export class UnitsValidation {
     name: z.string().min(1).max(100),
     type: z.string().min(1).max(100),
     egi: z.string().min(1).max(100),
-    createdBY: z.string().min(1).max(100),
+    createdBy: z.string().min(1).max(100),
   });
 
   static readonly UPDATE: ZodType = z.object({
