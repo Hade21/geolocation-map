@@ -25,6 +25,20 @@ export class TestService {
     });
   }
 
+  async addUserAdmin() {
+    return this.prismaService.user.create({
+      data: {
+        id: uuid(),
+        username: 'test admin',
+        firstName: 'test',
+        lastName: 'test',
+        role: 'ADMIN',
+        email: 'test@mail.com',
+        password: await hash('test', 10),
+      },
+    });
+  }
+
   async getUsers() {
     return this.prismaService.user.findFirst({
       where: {

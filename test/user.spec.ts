@@ -181,4 +181,75 @@ describe('UserController', () => {
       expect(response2.body.errors).toBe('User not found');
     });
   });
+
+  describe('PATCH /api/v1/users/:id', () => {
+    it(`Should be rejected if token is missing`, async () => {
+      await testService.deleteLocations();
+      await testService.deleteAllUnits();
+      await testService.deleteUsers();
+      await testService.addUser();
+      const user = await testService.getUsers();
+      const response = await request(app.getHttpServer()).patch(
+        `/api/v1/users/${user.id}`,
+      );
+
+      logger.info(response.body);
+
+      expect(response.status).toBe(401);
+      expect(response.body).toBeDefined();
+      expect(response.body.errors.message).toBe('Unauthorized');
+    });
+
+    it(`Should be rejected if not admin`, async () => {
+      await testService.deleteLocations();
+      await testService.deleteAllUnits();
+      await testService.deleteUsers();
+      await testService.addUser();
+      const user = await testService.getUsers();
+      const token = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          username: 'test',
+          password: 'test',
+        });
+      const response = await request(app.getHttpServer())
+        .patch(`/api/v1/users/${user.id}`)
+        .set('Authorization', `Bearer ${token.body.data.token.accessToken}`)
+        .send({
+          role: 'ADMIN',
+        });
+
+      expect(response.status).toBe(401);
+      expect(response.body.errors.message).toBe('Only admin can change role');
+    });
+
+    it(`Should be able to change role`, async () => {
+      await testService.deleteLocations();
+      await testService.deleteAllUnits();
+      await testService.deleteUsers();
+      await testService.addUser();
+      await testService.addUserAdmin();
+      const user = await testService.getUsers();
+      const token = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          username: 'test admin',
+          password: 'test',
+        });
+      const response = await request(app.getHttpServer())
+        .patch(`/api/v1/users/${user.id}`)
+        .set('Authorization', `Bearer ${token.body.data.token.accessToken}`)
+        .send({
+          role: 'ADMIN',
+        });
+
+      expect(response.status).toBe(200);
+      expect(response.body.data.id).toBeDefined();
+      expect(response.body.data.firstName).toBe('test');
+      expect(response.body.data.lastName).toBe('test');
+      expect(response.body.data.email).toBe('test@mail.com');
+      expect(response.body.data.username).toBe('test');
+      expect(response.body.data.role).toBe('ADMIN');
+    });
+  });
 });
