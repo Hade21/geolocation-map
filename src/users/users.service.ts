@@ -125,4 +125,32 @@ export class UsersService {
 
     return this.toResponseBody(user);
   }
+
+  async remove(id: string, user: User): Promise<UsersResponse> {
+    this.logger.info(
+      `UsersService.remove: New request remove user ${JSON.stringify(id)}`,
+    );
+    console.log(user);
+
+    const userExist = this.checkUserExist(user.username);
+
+    if (!userExist) throw new HttpException('User not found', 404);
+
+    const userById = await this.prismaService.user.findFirst({
+      where: {
+        id,
+      },
+    });
+
+    if (userById.username !== user.username)
+      throw new HttpException('User not found', 404);
+
+    const deletedUser = await this.prismaService.user.delete({
+      where: {
+        id,
+      },
+    });
+
+    return this.toResponseBody(deletedUser);
+  }
 }
