@@ -50,9 +50,9 @@ export class TestService {
     return this.prismaService.unit.create({
       data: {
         id: uuid(),
-        name: 'test',
-        type: 'test',
-        egi: 'test',
+        name: 'TEST',
+        type: 'TEST',
+        egi: 'TEST',
         users: {
           connect: {
             id: user.id,
@@ -65,7 +65,7 @@ export class TestService {
   async getUnits() {
     return this.prismaService.unit.findFirst({
       where: {
-        name: 'test',
+        name: 'TEST',
       },
     });
   }
@@ -81,7 +81,7 @@ export class TestService {
   async addLocation() {
     const unit = await this.prismaService.unit.findFirst({
       where: {
-        name: 'test',
+        name: 'TEST',
       },
     });
     const user = await this.prismaService.user.findUnique({

@@ -34,8 +34,15 @@ describe('LocationsController', () => {
     it('should be rejected if input field wrong', async () => {
       const unit = await testService.getUnits();
       const user = await testService.getUsers();
+      const token = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          username: 'test',
+          password: 'test',
+        });
       const response = await request(app.getHttpServer())
         .post(`/api/v1/units/${unit.id}/location`)
+        .set('Authorization', `Bearer ${token.body.data.token.accessToken}`)
         .send({
           long: '',
           lat: '',
@@ -54,8 +61,15 @@ describe('LocationsController', () => {
     it('should be able to add new location', async () => {
       const unit = await testService.getUnits();
       const user = await testService.getUsers();
+      const token = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          username: 'test',
+          password: 'test',
+        });
       const response = await request(app.getHttpServer())
         .post(`/api/v1/units/${unit.id}/location`)
+        .set('Authorization', `Bearer ${token.body.data.token.accessToken}`)
         .send({
           long: 'test',
           lat: 'test',

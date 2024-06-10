@@ -51,6 +51,10 @@ export class UnitsService {
       request,
     );
 
+    createRequest.name = createRequest.name.toUpperCase();
+    createRequest.egi = createRequest.egi.toUpperCase();
+    createRequest.type = createRequest.type.toUpperCase();
+
     const checkUnitExist = await this.prismaService.unit.count({
       where: {
         name: createRequest.name,
@@ -61,9 +65,6 @@ export class UnitsService {
 
     do {
       createRequest.id = uuid();
-      createRequest.name = createRequest.name.toUpperCase();
-      createRequest.egi = createRequest.egi.toUpperCase();
-      createRequest.type = createRequest.type.toUpperCase();
       checkIdExist = await this.prismaService.unit.count({
         where: {
           id: createRequest.id,
