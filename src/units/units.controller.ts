@@ -6,26 +6,36 @@ import {
   Param,
   Post,
   Put,
+  Request,
   UseGuards,
 } from '@nestjs/common';
+import { User } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import {
   CreateUnitsRequest,
   UnitsResponse,
   UpdateUnitsRequest,
 } from '../model/units.model';
+import { RequestWithUser } from '../model/users.model';
 import { WebResponse } from '../model/web.model';
+import { UsersService } from '../users/users.service';
 import { UnitsService } from './units.service';
 
 @Controller('/api/v1/units')
 export class UnitsController {
-  constructor(private unitsService: UnitsService) {}
+  constructor(
+    private unitsService: UnitsService,
+    private userService: UsersService,
+  ) {}
 
   @UseGuards(JwtAuthGuard)
   @Post()
   async create(
     @Body() request: CreateUnitsRequest,
+    @Request() req: RequestWithUser,
   ): Promise<WebResponse<UnitsResponse>> {
+    const user: User = await this.userService.findByUsername(req.user.username);
+    request.createdBy = user.id;
     const result = await this.unitsService.create(request);
     return { data: result };
   }
