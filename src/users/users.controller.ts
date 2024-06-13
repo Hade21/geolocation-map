@@ -9,6 +9,7 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import {
   CreateUserRequest,
@@ -18,6 +19,7 @@ import {
 import { WebResponse } from '../model/web.model';
 import { UsersService } from './users.service';
 
+@ApiTags('Users')
 @Controller('/api/v1/users')
 export class UsersController {
   constructor(private usersService: UsersService) {}
@@ -33,6 +35,7 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Put('/:id')
+  @ApiBody({ type: CreateUserRequest, description: 'Update user' })
   async update(
     @Param('id') id: string,
     @Body() body: CreateUserRequest,
@@ -54,10 +57,13 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Patch('/:id')
+  @ApiBody({ type: CreateUserRequest, description: 'Change user role' })
   async changeRole(
     @Param('id') id: string,
     @Request() req: RequestWithUser,
+    @Body() body: Pick<CreateUserRequest, 'role'>,
   ): Promise<WebResponse<UsersResponse>> {
+    body.role = body.role ?? 'USER';
     const result = await this.usersService.changeRole(id, req.user);
     return { data: result };
   }

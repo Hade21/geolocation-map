@@ -9,6 +9,7 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import {
@@ -21,6 +22,7 @@ import { WebResponse } from '../model/web.model';
 import { UsersService } from '../users/users.service';
 import { UnitsService } from './units.service';
 
+@ApiTags('Units')
 @Controller('/api/v1/units')
 export class UnitsController {
   constructor(
@@ -30,6 +32,7 @@ export class UnitsController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
+  @ApiBody({ type: CreateUnitsRequest, description: 'Create Units' })
   async create(
     @Body() request: CreateUnitsRequest,
     @Request() req: RequestWithUser,
@@ -42,6 +45,7 @@ export class UnitsController {
 
   @UseGuards(JwtAuthGuard)
   @Put('/:unitId')
+  @ApiBody({ type: UpdateUnitsRequest, description: 'Update Units' })
   async update(
     @Param('unitId') unitId: string,
     @Body() request: UpdateUnitsRequest,

@@ -6,6 +6,7 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 import {
   CreateUserRequest,
   RefreshResponse,
@@ -17,11 +18,13 @@ import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guard/local-auth.guard';
 import { RefreshJwtAuthGuard } from './guard/refresh-jwt-auth.guard';
 
+@ApiTags('Auth')
 @Controller('/api/v1/auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('register')
+  @ApiBody({ type: CreateUserRequest, description: 'User Register' })
   async register(
     @Body() body: CreateUserRequest,
   ): Promise<WebResponse<UsersResponse>> {
@@ -32,6 +35,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   @HttpCode(200)
+  @ApiBody({ type: CreateUserRequest, description: 'User Login' })
   async login(
     @Request() req: RequestWithUser,
   ): Promise<WebResponse<UsersResponse>> {

@@ -7,6 +7,7 @@ import {
   Request,
   UseGuards,
 } from '@nestjs/common';
+import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { User } from '@prisma/client';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import {
@@ -18,6 +19,7 @@ import { WebResponse } from '../model/web.model';
 import { UsersService } from '../users/users.service';
 import { LocationService } from './location.service';
 
+@ApiTags('Locations')
 @Controller(`/api/v1/units/:unitId/location`)
 export class LocationController {
   constructor(
@@ -27,6 +29,7 @@ export class LocationController {
 
   @UseGuards(JwtAuthGuard)
   @Post()
+  @ApiBody({ type: AddLocationRequest, description: 'Add Location Request' })
   async create(
     @Param('unitId') unitId: string,
     @Body() request: AddLocationRequest,
