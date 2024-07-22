@@ -6,6 +6,7 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.use(helmet());
+  app.enableCors();
   const options = new DocumentBuilder()
     .setTitle('Geolocation API')
     .setDescription("Geolocation API for mapping unit's location")
