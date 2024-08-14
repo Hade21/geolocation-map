@@ -128,4 +128,11 @@ export class UnitsService {
 
     return units.map((unit) => this.toResponseBody(unit));
   }
+
+  async getById(id: string): Promise<UnitsResponse> {
+    this.logger.info(
+      `UnitsService.getById: New request get unit by id ${JSON.stringify(id)}`,
+    );
+    return this.toResponseBody(await this.checkUnitExist(id));
+  }
 }
