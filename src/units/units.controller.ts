@@ -69,4 +69,10 @@ export class UnitsController {
     const result = await this.unitsService.get();
     return { data: result };
   }
+
+  @Get('/:id')
+  async getById(@Param('id') id: string): Promise<WebResponse<UnitsResponse>> {
+    const result = await this.unitsService.getById(id);
+    return { data: result };
+  }
 }
