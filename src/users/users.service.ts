@@ -102,7 +102,7 @@ export class UsersService {
 
     if (!result) throw new HttpException('User not found', 404);
 
-    return this.toResponseBody(result);
+    return result;
   }
 
   async update(request: CreateUserRequest): Promise<UsersResponse> {
