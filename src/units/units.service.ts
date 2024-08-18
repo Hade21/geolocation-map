@@ -124,9 +124,13 @@ export class UnitsService {
   async get(): Promise<UnitsResponse[]> {
     this.logger.info(`UnitsService.get: New request get all units`);
 
-    const units = await this.prismaService.unit.findMany();
+    const units = await this.prismaService.unit.findMany({
+      include: {
+        locations: true,
+      },
+    });
 
-    return units.map((unit) => this.toResponseBody(unit));
+    return units;
   }
 
   async getById(id: string): Promise<UnitsResponse> {
