@@ -67,4 +67,13 @@ export class UsersController {
     const result = await this.usersService.changeRole(id, req.user);
     return { data: result };
   }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('/all')
+  async getAllUsers(
+    @Request() req: RequestWithUser,
+  ): Promise<WebResponse<UsersResponse[]>> {
+    const result = await this.usersService.getAllUsers(req.user);
+    return { data: result };
+  }
 }

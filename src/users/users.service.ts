@@ -156,6 +156,22 @@ export class UsersService {
     return this.toResponseBody(deletedUser);
   }
 
+  async getAllUsers(user: User): Promise<UsersResponse[]> {
+    this.logger.info(`UsersService.getAllUsers: New request get all users`);
+
+    const isAdmin = await this.prismaService.user.findUnique({
+      where: {
+        username: user.username,
+      },
+    });
+
+    if (isAdmin.role !== 'ADMIN')
+      throw new UnauthorizedException('Only admin can get all users');
+
+    const users = await this.prismaService.user.findMany();
+    return users.map((user) => this.toResponseBody(user));
+  }
+
   async changeRole(id: string, user: User): Promise<UsersResponse> {
     this.logger.info(
       `UsersService.changeRole: New request change role user ${JSON.stringify(id)}`,
