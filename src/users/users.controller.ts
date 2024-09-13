@@ -64,7 +64,7 @@ export class UsersController {
     @Body() body: Pick<CreateUserRequest, 'role'>,
   ): Promise<WebResponse<UsersResponse>> {
     body.role = body.role ?? 'USER';
-    const result = await this.usersService.changeRole(id, req.user);
+    const result = await this.usersService.changeRole(id, req.user, body.role);
     return { data: result };
   }
 
