@@ -172,7 +172,11 @@ export class UsersService {
     return users.map((user) => this.toResponseBody(user));
   }
 
-  async changeRole(id: string, user: User): Promise<UsersResponse> {
+  async changeRole(
+    id: string,
+    user: User,
+    role: 'ADMIN' | 'USER',
+  ): Promise<UsersResponse> {
     this.logger.info(
       `UsersService.changeRole: New request change role user ${JSON.stringify(id)}`,
     );
@@ -198,7 +202,7 @@ export class UsersService {
         id,
       },
       data: {
-        role: 'ADMIN',
+        role: role,
       },
     });
 
