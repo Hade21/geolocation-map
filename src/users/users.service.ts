@@ -123,7 +123,10 @@ export class UsersService {
       where: {
         id: updateRequest.id,
       },
-      data: updateRequest,
+      data: {
+        ...updateRequest,
+        password: await bcrypt.hash(updateRequest.password, 10),
+      },
     });
 
     return this.toResponseBody(user);
