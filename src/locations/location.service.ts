@@ -56,10 +56,14 @@ export class LocationService {
         },
       });
 
-      await this.prismaService.location.delete({
-        where: {
-          id: locations[4].id,
-        },
+      const deleted = locations.splice(4, locations.length - 4);
+      console.log('🚀 ~ LocationService ~ create ~ deleted:', deleted);
+      deleted.forEach(async (location) => {
+        await this.prismaService.location.delete({
+          where: {
+            id: location.id,
+          },
+        });
       });
     }
 
