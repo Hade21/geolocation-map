@@ -16,7 +16,5 @@ export class UserValidation {
     firstName: z.string().min(1).max(100).optional(),
     lastName: z.string().min(1).max(100).optional(),
     email: z.string().min(1).max(100).email().optional(),
-    password: z.string().min(1).max(100).optional(),
-    role: z.string().min(1).max(50).optional(),
   });
 }

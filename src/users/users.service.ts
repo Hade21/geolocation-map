@@ -115,9 +115,16 @@ export class UsersService {
       request,
     );
 
-    const userExist = this.checkUserExist(updateRequest.username);
+    const userData = await this.prismaService.user.findUnique({
+      where: {
+        username: updateRequest.username,
+      },
+    });
 
-    if (!userExist) throw new HttpException('User not found', 404);
+    if (!userData) throw new HttpException('User not found', 404);
+
+    if (userData.id !== updateRequest.id)
+      throw new ConflictException('Username already exist');
 
     const user = await this.prismaService.user.update({
       where: {
@@ -125,7 +132,6 @@ export class UsersService {
       },
       data: {
         ...updateRequest,
-        password: await bcrypt.hash(updateRequest.password, 10),
       },
     });
 
