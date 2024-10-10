@@ -1,0 +1,40 @@
+version: '3.5'
+
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_USER: hade21
+      POSTGRES_PASSWORD: R#hm@n1999
+      POSTGRES_DB: nandi-db
+    ports:
+      - '5432:5432'
+    volumes:
+      - ./docker/db/data:/var/lib/postgresql/data
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nandi-server
+    env_file:
+      - .env
+    ports:
+      - '4000:3000'
+    volumes:
+      - .:/app
+    depends_on:
+      - db
+
+  pgadmin:
+    image: dpage/pgadmin4
+    restart: always
+    container_name: nandi-pgadmin4
+    ports:
+      - '5050:80'
+    environment:
+      PGADMIN_DEFAULT_EMAIL: abdurrohmanmuhammad123@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: R#hm@n1999
+    depends_on:
+      - db
