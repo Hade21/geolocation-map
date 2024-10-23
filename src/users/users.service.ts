@@ -12,7 +12,11 @@ import { v4 as uuid } from 'uuid';
 import { Logger } from 'winston';
 import { PrismaService } from '../common/prisma.service';
 import { ValidationService } from '../common/validation.service';
-import { CreateUserRequest, UsersResponse } from '../model/users.model';
+import {
+  ChangePassword,
+  CreateUserRequest,
+  UsersResponse,
+} from '../model/users.model';
 import { UserValidation } from './users.validation';
 
 @Injectable()
@@ -219,5 +223,25 @@ export class UsersService {
       ...this.toResponseBody(updatedUser),
       role: updatedUser.role,
     };
+  }
+
+  async changePassword(
+    user: User,
+    body: ChangePassword,
+  ): Promise<UsersResponse> {
+    const userExist = await this.validateUser(user.username, body.oldPassword);
+    if (body.newPassword !== body.confirmPassword) {
+      throw new HttpException('Password not match', 400);
+    }
+    const hashedPassword = await bcrypt.hash(body.newPassword, 10);
+    const updateUser = await this.prismaService.user.update({
+      where: {
+        id: userExist.id,
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
+    return this.toResponseBody(updateUser);
   }
 }

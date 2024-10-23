@@ -1,9 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { HttpException, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { User } from '@prisma/client';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { Logger } from 'winston';
 import {
+  ChangePassword,
   CreateUserRequest,
   LoginResponse,
   Payload,
@@ -65,5 +66,14 @@ export class AuthService {
         }),
       },
     };
+  }
+
+  async changePassword(
+    user: User,
+    body: ChangePassword,
+  ): Promise<{ message: string }> {
+    const savedUser = await this.userService.changePassword(user, body);
+    if (savedUser) return { message: 'Password changed successfully' };
+    throw new HttpException('Something went wrong', 500);
   }
 }

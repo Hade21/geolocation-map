@@ -3,11 +3,13 @@ import {
   Controller,
   HttpCode,
   Post,
+  Put,
   Request,
   UseGuards,
 } from '@nestjs/common';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import {
+  ChangePassword,
   CreateUserRequest,
   RefreshResponse,
   RequestWithUser,
@@ -15,6 +17,7 @@ import {
 } from '../model/users.model';
 import { WebResponse } from '../model/web.model';
 import { AuthService } from './auth.service';
+import { JwtAuthGuard } from './guard/jwt-auth.guard';
 import { LocalAuthGuard } from './guard/local-auth.guard';
 import { RefreshJwtAuthGuard } from './guard/refresh-jwt-auth.guard';
 
@@ -45,10 +48,22 @@ export class AuthController {
 
   @UseGuards(RefreshJwtAuthGuard)
   @Post('refresh')
+  @ApiBody({ type: CreateUserRequest, description: 'Refresh Token' })
   async refresh(
     @Request() req: RequestWithUser,
   ): Promise<WebResponse<RefreshResponse>> {
     const result = await this.authService.refresh(req.user);
+    return { data: result };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Put('change-password')
+  @ApiBody({ type: CreateUserRequest, description: 'User Change Password' })
+  async changePassword(
+    @Request() req: RequestWithUser,
+    @Body() body: ChangePassword,
+  ): Promise<WebResponse<{ message: string }>> {
+    const result = await this.authService.changePassword(req.user, body);
     return { data: result };
   }
 }

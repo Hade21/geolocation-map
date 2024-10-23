@@ -130,3 +130,33 @@ export class Payload {
 export class RequestWithUser extends Request {
   user?: User;
 }
+
+export class ChangePassword {
+  @ApiProperty({
+    type: String,
+    description: 'User old password',
+    required: true,
+    minLength: 1,
+    maxLength: 100,
+    example: 'password',
+  })
+  oldPassword: string;
+  @ApiProperty({
+    type: String,
+    description: 'User new password',
+    required: true,
+    minLength: 1,
+    maxLength: 100,
+    example: 'password',
+  })
+  newPassword: string;
+  @ApiProperty({
+    type: String,
+    description: 'User confirm password',
+    required: true,
+    minLength: 1,
+    maxLength: 100,
+    example: 'password',
+  })
+  confirmPassword: string;
+}
