@@ -28,6 +28,8 @@ describe('LocationsController', () => {
     beforeEach(async () => {
       await testService.deleteLocations();
       await testService.deleteAllUnits();
+      await testService.deleteUsers();
+      await testService.addUser();
       await testService.createUnits();
     });
 
