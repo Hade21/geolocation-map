@@ -125,9 +125,7 @@ export class UsersService {
       },
     });
 
-    if (!userData) throw new HttpException('User not found', 404);
-
-    if (userData.id !== updateRequest.id)
+    if (userData && userData.id !== updateRequest.id)
       throw new ConflictException('Username already exist');
 
     const user = await this.prismaService.user.update({
