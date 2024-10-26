@@ -3,15 +3,18 @@ import {
   HttpException,
   Inject,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { nanoid } from 'nanoid';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { v4 as uuid } from 'uuid';
 import { Logger } from 'winston';
 import { PrismaService } from '../common/prisma.service';
 import { ValidationService } from '../common/validation.service';
+import { MailService } from '../mail/mail.service';
 import {
   ChangePassword,
   CreateUserRequest,
@@ -24,6 +27,7 @@ export class UsersService {
   constructor(
     private prismaService: PrismaService,
     private validationService: ValidationService,
+    private mailService: MailService,
     @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
   ) {}
 
@@ -241,5 +245,34 @@ export class UsersService {
       },
     });
     return this.toResponseBody(updateUser);
+  }
+
+  async forgotPassword(email: string): Promise<{ message: string }> {
+    const users = await this.prismaService.user.findMany({
+      where: {
+        email: { equals: email },
+      },
+    });
+    if (!users) throw new NotFoundException('User not found');
+    const token = nanoid(64);
+
+    for (const user of users) {
+      const userExist = await this.validateUser(user!.username, user!.password);
+      await this.prismaService.authLog.create({
+        data: {
+          id: uuid(),
+          users: {
+            connect: {
+              id: userExist.id,
+            },
+          },
+          resetToken: token,
+          resetTokenExpiry: new Date(Date.now() + 3600),
+          timeStamp: new Date().toISOString(),
+        },
+      });
+      this.mailService.sendResetPassEmail(userExist, token);
+      return { message: 'Reset token sent to email' };
+    }
   }
 }

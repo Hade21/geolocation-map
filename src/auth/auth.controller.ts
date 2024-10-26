@@ -66,4 +66,14 @@ export class AuthController {
     const result = await this.authService.changePassword(req.user, body);
     return { data: result };
   }
+
+  @Post('forgot-password')
+  @ApiBody({ type: CreateUserRequest, description: 'User Forgot Password' })
+  async forgotPassword(
+    @Request() req: RequestWithUser,
+    @Body() body: { email: string },
+  ): Promise<WebResponse<{ message: string }>> {
+    const result = await this.authService.forgotPassword(body.email);
+    return { data: result };
+  }
 }

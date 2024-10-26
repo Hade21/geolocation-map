@@ -76,4 +76,10 @@ export class AuthService {
     if (savedUser) return { message: 'Password changed successfully' };
     throw new HttpException('Something went wrong', 500);
   }
+
+  async forgotPassword(email: string): Promise<{ message: string }> {
+    const message = await this.userService.forgotPassword(email);
+    if (message) return { message: message.message };
+    throw new HttpException('Something went wrong', 500);
+  }
 }
