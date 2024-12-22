@@ -26,6 +26,7 @@ describe('UnitsController', () => {
 
   describe('POST api/v1/units', () => {
     it('should be rejected if input field wrong', async () => {
+      await testService.deleteAuth();
       await testService.deleteLocations();
       await testService.deleteUnits();
       await testService.deleteUsers();
@@ -54,6 +55,7 @@ describe('UnitsController', () => {
     });
 
     it('should be able to create new units', async () => {
+      await testService.deleteAuth();
       await testService.deleteLocations();
       await testService.deleteUnits();
       await testService.deleteUsers();
@@ -90,6 +92,15 @@ describe('UnitsController', () => {
         .send({
           username: 'test',
           password: 'test',
+        });
+      await request(app.getHttpServer())
+        .post('/api/v1/units')
+        .set('Authorization', `Bearer ${token.body.data.token.accessToken}`)
+        .send({
+          name: 'test',
+          type: 'test',
+          egi: 'test',
+          createdBy: user.id,
         });
       const response = await request(app.getHttpServer())
         .post('/api/v1/units')
