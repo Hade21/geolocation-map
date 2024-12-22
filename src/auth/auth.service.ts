@@ -72,14 +72,30 @@ export class AuthService {
     user: User,
     body: ChangePassword,
   ): Promise<{ message: string }> {
+    this.logger.info(
+      `AuthService.changePassword: New request to change password ${JSON.stringify(user)}`,
+    );
     const savedUser = await this.userService.changePassword(user, body);
     if (savedUser) return { message: 'Password changed successfully' };
     throw new HttpException('Something went wrong', 500);
   }
 
-  async forgotPassword(email: string): Promise<{ message: string }> {
+  async forgotPassword(
+    email: string,
+  ): Promise<{ statusCode: number; message: string }> {
     const message = await this.userService.forgotPassword(email);
-    if (message) return { message: message.message };
+    if (message) return message;
     throw new HttpException('Something went wrong', 500);
+  }
+
+  async resetPassword(newPassword: string, resetToken: string) {
+    this.logger.info(
+      `AuthService.resetPassword: New request to reset password ${resetToken}`,
+    );
+    const message = await this.userService.resetPassword(
+      newPassword,
+      resetToken,
+    );
+    return message;
   }
 }

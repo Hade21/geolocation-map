@@ -68,12 +68,25 @@ export class AuthController {
   }
 
   @Post('forgot-password')
+  @HttpCode(200)
   @ApiBody({ type: CreateUserRequest, description: 'User Forgot Password' })
   async forgotPassword(
-    @Request() req: RequestWithUser,
     @Body() body: { email: string },
-  ): Promise<WebResponse<{ message: string }>> {
+  ): Promise<WebResponse<{ statusCode: number; message: string }>> {
     const result = await this.authService.forgotPassword(body.email);
+    return { data: result };
+  }
+
+  @Post('reset-password')
+  @HttpCode(200)
+  @ApiBody({ type: CreateUserRequest, description: 'Reset Password' })
+  async resetPassword(
+    @Body() body: { newPassword: string; resetToken: string },
+  ) {
+    const result = await this.authService.resetPassword(
+      body.newPassword,
+      body.resetToken,
+    );
     return { data: result };
   }
 }
