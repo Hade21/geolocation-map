@@ -1,25 +1,31 @@
 import { MailerModule } from '@nestjs-modules/mailer';
+import { HandlebarsAdapter } from '@nestjs-modules/mailer/dist/adapters/handlebars.adapter';
 import { Module } from '@nestjs/common';
-import { MailController } from './mail.controller';
+import { join } from 'path';
 import { MailService } from './mail.service';
 
 @Module({
   imports: [
     MailerModule.forRoot({
       transport: {
-        host: 'smtp.ethereal.email',
+        host: process.env.SMTP_HOST,
         port: 587,
+        secure: false,
         auth: {
           user: process.env.SMTP_USER,
           pass: process.env.SMTP_PASS,
         },
-        tls: {
-          rejectUnauthorized: false,
-        },
+      },
+      defaults: {
+        from: '"Geolocation API" <admin@nandi-maps.xyz>',
+      },
+      template: {
+        dir: join(__dirname, 'templates'),
+        adapter: new HandlebarsAdapter(),
+        options: { strict: true },
       },
     }),
   ],
-  controllers: [MailController],
   providers: [MailService],
   exports: [MailService],
 })
