@@ -26,6 +26,7 @@ describe('LocationsController', () => {
 
   describe('POST api/v1/units/:unitId/location', () => {
     beforeEach(async () => {
+      await testService.deleteAuth();
       await testService.deleteLocations();
       await testService.deleteAllUnits();
       await testService.deleteUsers();

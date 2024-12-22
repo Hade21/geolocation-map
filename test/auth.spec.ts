@@ -26,6 +26,7 @@ describe('AuthController', () => {
 
   describe('POST api/v1/auth/register', () => {
     beforeEach(async () => {
+      await testService.deleteAuth();
       await testService.deleteLocations();
       await testService.deleteUnits();
       await testService.deleteUsers();
@@ -73,6 +74,7 @@ describe('AuthController', () => {
 
   describe('POST api/v1/auth/login', () => {
     beforeEach(async () => {
+      await testService.deleteAuth();
       await testService.deleteLocations();
       await testService.deleteUnits();
       await testService.deleteUsers();
@@ -111,6 +113,7 @@ describe('AuthController', () => {
   });
   describe('POST api/v1/auth/refresh', () => {
     beforeEach(async () => {
+      await testService.deleteAuth();
       await testService.deleteLocations();
       await testService.deleteUnits();
       await testService.deleteUsers();
@@ -151,6 +154,7 @@ describe('AuthController', () => {
   });
   describe('POST api/v1/auth/change-password', () => {
     beforeEach(async () => {
+      await testService.deleteAuth();
       await testService.deleteLocations();
       await testService.deleteUnits();
       await testService.deleteUsers();
@@ -239,6 +243,42 @@ describe('AuthController', () => {
 
       expect(response.status).toBe(200);
       expect(response.body.data.message).toBe('Password changed successfully');
+    });
+  });
+
+  describe('POST api/v1/auth/forgot-password', () => {
+    beforeEach(async () => {
+      await testService.deleteAuth();
+      await testService.deleteLocations();
+      await testService.deleteUnits();
+      await testService.deleteUsers();
+      await testService.addUser();
+    });
+    it('should return user not found', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/auth/forgot-password')
+        .send({
+          email: 'test-fail@mail.com',
+        });
+
+      logger.info(response.body);
+
+      expect(response.status).toBe(404);
+      expect(response.body).toBeDefined();
+    });
+    it('should return success', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/auth/forgot-password')
+        .send({
+          email: 'test@mail.com',
+        });
+
+      logger.info(response.body);
+
+      expect(response.status).toBe(200);
+      expect(response.body.data.message).toBe(
+        'Reset token has been sent to email',
+      );
     });
   });
 });
