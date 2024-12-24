@@ -17,6 +17,7 @@ model User {
   email     String     @db.VarChar(100)
   locations Location[]
   units     Unit[]
+  
   AuthLog AuthLog[]
 
   @@map("users")
