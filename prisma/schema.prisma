@@ -17,6 +17,8 @@ model User {
   email     String     @db.VarChar(100)
   locations Location[]
   units     Unit[]
+  
+  AuthLog AuthLog[]
 
   @@map("users")
 }
@@ -46,6 +48,19 @@ model Location {
   units     Unit     @relation(fields: [unitId], references: [id])
 
   @@map("locations")
+}
+
+model AuthLog {
+  id                  String  @id @default(uuid())
+  userId              String  @db.VarChar(100)
+  timeStamp           DateTime  @db.Timestamp(6)
+  refreshToken        String?  @db.VarChar(100)  
+  refreshTokenExpiry  DateTime? @db.Timestamp(6)
+  resetToken          String?  @db.VarChar(100)
+  resetTokenExpiry    DateTime?  @db.Timestamp(6)
+  users               User  @relation(fields: [userId],references: [id])
+
+  @@map("authLogs")
 }
 
 enum Role {

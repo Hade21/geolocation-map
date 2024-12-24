@@ -28,6 +28,7 @@ describe('UserController', () => {
     it(`Should be rejected if field is missing`, async () => {
       await testService.deleteLocations();
       await testService.deleteAllUnits();
+      await testService.deleteAuth();
       await testService.deleteUsers();
       await testService.addUser();
       const user = await testService.getUsers();
@@ -56,6 +57,7 @@ describe('UserController', () => {
     it(`Should be able to update user`, async () => {
       await testService.deleteLocations();
       await testService.deleteAllUnits();
+      await testService.deleteAuth();
       await testService.deleteUsers();
       await testService.addUser();
       const user = await testService.getUsers();
@@ -90,6 +92,7 @@ describe('UserController', () => {
     it(`Should be rejected if token is missing`, async () => {
       await testService.deleteLocations();
       await testService.deleteAllUnits();
+      await testService.deleteAuth();
       await testService.deleteUsers();
       await testService.addUser();
       const response = await request(app.getHttpServer()).get(`/api/v1/users`);
@@ -104,6 +107,7 @@ describe('UserController', () => {
     it(`Should be able to get user`, async () => {
       await testService.deleteLocations();
       await testService.deleteAllUnits();
+      await testService.deleteAuth();
       await testService.deleteUsers();
       await testService.addUser();
       const token = await request(app.getHttpServer())
@@ -131,6 +135,7 @@ describe('UserController', () => {
     it(`Should be rejected if token is missing`, async () => {
       await testService.deleteLocations();
       await testService.deleteAllUnits();
+      await testService.deleteAuth();
       await testService.deleteUsers();
       await testService.addUser();
       const user = await testService.getUsers();
@@ -148,6 +153,7 @@ describe('UserController', () => {
     it(`Should be able to delete user`, async () => {
       await testService.deleteLocations();
       await testService.deleteAllUnits();
+      await testService.deleteAuth();
       await testService.deleteUsers();
       await testService.addUser();
       const user = await testService.getUsers();
@@ -186,6 +192,7 @@ describe('UserController', () => {
     it(`Should be rejected if token is missing`, async () => {
       await testService.deleteLocations();
       await testService.deleteAllUnits();
+      await testService.deleteAuth();
       await testService.deleteUsers();
       await testService.addUser();
       const user = await testService.getUsers();
@@ -203,6 +210,7 @@ describe('UserController', () => {
     it(`Should be rejected if not admin`, async () => {
       await testService.deleteLocations();
       await testService.deleteAllUnits();
+      await testService.deleteAuth();
       await testService.deleteUsers();
       await testService.addUser();
       const user = await testService.getUsers();
@@ -226,6 +234,7 @@ describe('UserController', () => {
     it(`Should be able to change role`, async () => {
       await testService.deleteLocations();
       await testService.deleteAllUnits();
+      await testService.deleteAuth();
       await testService.deleteUsers();
       await testService.addUser();
       await testService.addUserAdmin();

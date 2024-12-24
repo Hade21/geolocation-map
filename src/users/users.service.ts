@@ -3,16 +3,23 @@ import {
   HttpException,
   Inject,
   Injectable,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { nanoid } from 'nanoid';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { v4 as uuid } from 'uuid';
 import { Logger } from 'winston';
 import { PrismaService } from '../common/prisma.service';
 import { ValidationService } from '../common/validation.service';
-import { CreateUserRequest, UsersResponse } from '../model/users.model';
+import { MailService } from '../mail/mail.service';
+import {
+  ChangePassword,
+  CreateUserRequest,
+  UsersResponse,
+} from '../model/users.model';
 import { UserValidation } from './users.validation';
 
 @Injectable()
@@ -20,6 +27,7 @@ export class UsersService {
   constructor(
     private prismaService: PrismaService,
     private validationService: ValidationService,
+    private mailService: MailService,
     @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
   ) {}
 
@@ -143,7 +151,9 @@ export class UsersService {
       `UsersService.remove: New request remove user ${JSON.stringify(id)}`,
     );
 
-    const userExist = this.checkUserExist(user.username);
+    const userExist = this.prismaService.user.findFirst({
+      where: { username: user.username },
+    });
 
     if (!userExist) throw new HttpException('User not found', 404);
 
@@ -218,6 +228,91 @@ export class UsersService {
     return {
       ...this.toResponseBody(updatedUser),
       role: updatedUser.role,
+    };
+  }
+
+  async changePassword(
+    user: User,
+    body: ChangePassword,
+  ): Promise<UsersResponse> {
+    const userExist = await this.validateUser(user.username, body.oldPassword);
+    if (body.newPassword !== body.confirmPassword) {
+      throw new HttpException('Password not match', 400);
+    }
+    const hashedPassword = await bcrypt.hash(body.newPassword, 10);
+    const updateUser = await this.prismaService.user.update({
+      where: {
+        id: userExist.id,
+      },
+      data: {
+        password: hashedPassword,
+      },
+    });
+    return this.toResponseBody(updateUser);
+  }
+
+  async forgotPassword(
+    email: string,
+  ): Promise<{ statusCode: number; message: string }> {
+    const user = await this.prismaService.user.findFirst({
+      where: {
+        email: { equals: email },
+      },
+    });
+    if (!user) throw new NotFoundException('User not found');
+    const token = nanoid(64);
+    const expiryDate = new Date();
+    expiryDate.setHours(expiryDate.getHours() + 1);
+
+    await this.prismaService.authLog.create({
+      data: {
+        id: uuid(),
+        users: {
+          connect: {
+            id: user.id,
+          },
+        },
+        resetToken: token,
+        resetTokenExpiry: expiryDate,
+        timeStamp: new Date().toISOString(),
+      },
+    });
+
+    await this.mailService.sendForgotPassword(user, token);
+    return { statusCode: 200, message: 'Reset token has been sent to email' };
+  }
+
+  async resetPassword(newPassword: string, resetToken: string) {
+    const token = await this.prismaService.authLog.findFirst({
+      where: {
+        resetToken,
+        resetTokenExpiry: { gte: new Date() },
+      },
+    });
+    console.log('🚀 ~ UsersService ~ resetPassword ~ token:', token);
+    if (!token) {
+      throw new UnauthorizedException('Invalid link or token expired');
+    }
+    const user = await this.prismaService.user.findUnique({
+      where: {
+        id: token.userId,
+      },
+    });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    user.password = await bcrypt.hash(newPassword, 10);
+    await this.prismaService.user.update({
+      where: {
+        id: user.id,
+      },
+      data: { ...user },
+    });
+
+    return {
+      statusCode: 200,
+      message: 'Password has been reset, try to login again',
     };
   }
 }

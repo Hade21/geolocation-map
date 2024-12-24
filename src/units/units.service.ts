@@ -125,8 +125,29 @@ export class UnitsService {
     this.logger.info(`UnitsService.get: New request get all units`);
 
     const units = await this.prismaService.unit.findMany({
+      orderBy: [
+        {
+          type: 'asc',
+        },
+        {
+          name: 'asc',
+        },
+      ],
       include: {
-        locations: true,
+        locations: {
+          orderBy: {
+            dateTime: 'desc',
+          },
+          select: {
+            id: true,
+            long: true,
+            lat: true,
+            alt: true,
+            location: true,
+            dateTime: true,
+            createdBy: true,
+          },
+        },
       },
     });
 

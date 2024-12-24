@@ -57,7 +57,6 @@ export class LocationService {
       });
 
       const deleted = locations.splice(4, locations.length - 4);
-      console.log('🚀 ~ LocationService ~ create ~ deleted:', deleted);
       deleted.forEach(async (location) => {
         await this.prismaService.location.delete({
           where: {

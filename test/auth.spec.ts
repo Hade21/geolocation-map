@@ -26,6 +26,7 @@ describe('AuthController', () => {
 
   describe('POST api/v1/auth/register', () => {
     beforeEach(async () => {
+      await testService.deleteAuth();
       await testService.deleteLocations();
       await testService.deleteUnits();
       await testService.deleteUsers();
@@ -73,6 +74,7 @@ describe('AuthController', () => {
 
   describe('POST api/v1/auth/login', () => {
     beforeEach(async () => {
+      await testService.deleteAuth();
       await testService.deleteLocations();
       await testService.deleteUnits();
       await testService.deleteUsers();
@@ -107,6 +109,176 @@ describe('AuthController', () => {
       expect(response.body.data.username).toBe('test');
       expect(response.body.data.token.accessToken).toBeDefined();
       expect(response.body.data.token.refreshToken).toBeDefined();
+    });
+  });
+  describe('POST api/v1/auth/refresh', () => {
+    beforeEach(async () => {
+      await testService.deleteAuth();
+      await testService.deleteLocations();
+      await testService.deleteUnits();
+      await testService.deleteUsers();
+      await testService.addUser();
+    });
+    it('should be rejected if input field wrong', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/auth/refresh')
+        .send({
+          refreshToken: '',
+        });
+
+      logger.info(response.body);
+
+      expect(response.status).toBe(401);
+      expect(response.body).toBeDefined();
+    });
+
+    it('should be able to refresh token', async () => {
+      const user = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          username: 'test',
+          password: 'test',
+        });
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/auth/refresh')
+        .send({
+          refreshToken: user.body.data.token.refreshToken,
+        });
+
+      logger.info(response.body);
+
+      expect(response.status).toBe(201);
+      expect(response.body.data.username).toBe('test');
+      expect(response.body.data.token.accessToken).toBeDefined();
+    });
+  });
+  describe('POST api/v1/auth/change-password', () => {
+    beforeEach(async () => {
+      await testService.deleteAuth();
+      await testService.deleteLocations();
+      await testService.deleteUnits();
+      await testService.deleteUsers();
+      await testService.addUser();
+    });
+    it('should be rejected if old password wrong', async () => {
+      const user = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          username: 'test',
+          password: 'test',
+        });
+      const response = await request(app.getHttpServer())
+        .put('/api/v1/auth/change-password')
+        .set('Authorization', `Bearer ${user.body.data.token.accessToken}`)
+        .send({
+          oldPassword: '',
+          newPassword: '',
+          confirmPassword: '',
+        });
+
+      logger.info(response.body);
+
+      expect(response.status).toBe(401);
+      expect(response.body).toBeDefined();
+    });
+    it('should be rejected if old password wrong', async () => {
+      const user = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          username: 'test',
+          password: 'test',
+        });
+      const response = await request(app.getHttpServer())
+        .put('/api/v1/auth/change-password')
+        .set('Authorization', `Bearer ${user.body.data.token.accessToken}`)
+        .send({
+          oldPassword: 'wrong',
+          newPassword: 'test2',
+          confirmPassword: 'test2',
+        });
+
+      logger.info(response.body);
+
+      expect(response.status).toBe(401);
+      expect(response.body).toBeDefined();
+    });
+    it('should be rejected if new password not match', async () => {
+      const user = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          username: 'test',
+          password: 'test',
+        });
+      const response = await request(app.getHttpServer())
+        .put('/api/v1/auth/change-password')
+        .set('Authorization', `Bearer ${user.body.data.token.accessToken}`)
+        .send({
+          oldPassword: 'test',
+          newPassword: 'test2',
+          confirmPassword: 'test3',
+        });
+
+      logger.info(response.body);
+
+      expect(response.status).toBe(400);
+      expect(response.body).toBeDefined();
+    });
+    it('should be able to change password', async () => {
+      const user = await request(app.getHttpServer())
+        .post('/api/v1/auth/login')
+        .send({
+          username: 'test',
+          password: 'test',
+        });
+      const response = await request(app.getHttpServer())
+        .put('/api/v1/auth/change-password')
+        .set('Authorization', `Bearer ${user.body.data.token.accessToken}`)
+        .send({
+          oldPassword: 'test',
+          newPassword: 'test2',
+          confirmPassword: 'test2',
+        });
+
+      logger.info(response.body);
+
+      expect(response.status).toBe(200);
+      expect(response.body.data.message).toBe('Password changed successfully');
+    });
+  });
+
+  describe('POST api/v1/auth/forgot-password', () => {
+    beforeEach(async () => {
+      await testService.deleteAuth();
+      await testService.deleteLocations();
+      await testService.deleteUnits();
+      await testService.deleteUsers();
+      await testService.addUser();
+    });
+    it('should return user not found', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/auth/forgot-password')
+        .send({
+          email: 'test-fail@mail.com',
+        });
+
+      logger.info(response.body);
+
+      expect(response.status).toBe(404);
+      expect(response.body).toBeDefined();
+    });
+    it('should return success', async () => {
+      const response = await request(app.getHttpServer())
+        .post('/api/v1/auth/forgot-password')
+        .send({
+          email: 'test@mail.com',
+        });
+
+      logger.info(response.body);
+
+      expect(response.status).toBe(200);
+      expect(response.body.data.message).toBe(
+        'Reset token has been sent to email',
+      );
     });
   });
 });

@@ -6,3 +6,11 @@ export class AuthValidation {
     password: z.string().min(1).max(100),
   });
 }
+
+export class ChangePasswordValidation {
+  static readonly CHANGE: ZodType = z.object({
+    oldPassword: z.string().min(1).max(100),
+    newPassword: z.string().min(1).max(100),
+    confirmPassword: z.string().min(1).max(100),
+  });
+}

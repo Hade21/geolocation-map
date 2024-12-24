@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { MailService } from '../mail/mail.service';
 import { UsersService } from '../users/users.service';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -26,6 +27,7 @@ import { RefreshJwtStrategy } from './strategy/refreshToken-strategy';
     JwtAuthGuard,
     RefreshJwtStrategy,
     RefreshJwtAuthGuard,
+    MailService,
   ],
   controllers: [AuthController],
   exports: [JwtAuthGuard],
