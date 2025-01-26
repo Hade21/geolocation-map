@@ -51,6 +51,7 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Delete('/:id')
+  @ApiBody({ type: CreateUserRequest, description: 'Delete user' })
   async remove(
     @Request() req: RequestWithUser,
     @Param('id') id: string,
@@ -74,6 +75,7 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Get('/all')
+  @ApiBody({ type: CreateUserRequest, description: 'Get all users' })
   async getAllUsers(
     @Request() req: RequestWithUser,
   ): Promise<WebResponse<UsersResponse[]>> {
@@ -84,6 +86,7 @@ export class UsersController {
   @UseGuards(JwtAuthGuard)
   @Post('/profile-picture')
   @UseInterceptors(FileInterceptor('image'))
+  @ApiBody({ type: CreateUserRequest, description: 'Upload profile picture' })
   async setProfilePict(
     @Request() req: RequestWithUser,
     @UploadedFile() file: Express.Multer.File,
