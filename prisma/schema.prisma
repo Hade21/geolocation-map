@@ -8,16 +8,17 @@ datasource db {
 }
 
 model User {
-  id        String     @id
-  username  String     @unique @db.VarChar(100)
-  firstName String     @db.VarChar(100)
-  lastName  String     @db.VarChar(100)
-  password  String     @db.VarChar(100)
-  role      Role       @default(USER)
-  email     String     @db.VarChar(100)
-  locations Location[]
-  units     Unit[]
-  
+  id          String     @id
+  username    String     @unique @db.VarChar(100)
+  firstName   String     @db.VarChar(100)
+  lastName    String     @db.VarChar(100)
+  password    String     @db.VarChar(100)
+  role        Role       @default(USER)
+  email       String     @db.VarChar(100)
+  profilePict String?    @db.Text()
+  locations   Location[]
+  units       Unit[]
+
   AuthLog AuthLog[]
 
   @@map("users")
@@ -30,7 +31,7 @@ model Unit {
   egi       String     @db.VarChar(100)
   createdBy String     @db.VarChar(100)
   locations Location[]
-  users     User       @relation(fields: [createdBy], references: [id])
+  users     User?      @relation(fields: [createdBy], references: [id])
 
   @@map("units")
 }
@@ -51,14 +52,14 @@ model Location {
 }
 
 model AuthLog {
-  id                  String  @id @default(uuid())
-  userId              String  @db.VarChar(100)
-  timeStamp           DateTime  @db.Timestamp(6)
-  refreshToken        String?  @db.VarChar(100)  
-  refreshTokenExpiry  DateTime? @db.Timestamp(6)
-  resetToken          String?  @db.VarChar(100)
-  resetTokenExpiry    DateTime?  @db.Timestamp(6)
-  users               User  @relation(fields: [userId],references: [id])
+  id                 String    @id @default(uuid())
+  userId             String    @db.VarChar(100)
+  timeStamp          DateTime  @db.Timestamp(6)
+  refreshToken       String?   @db.VarChar(100)
+  refreshTokenExpiry DateTime? @db.Timestamp(6)
+  resetToken         String?   @db.VarChar(100)
+  resetTokenExpiry   DateTime? @db.Timestamp(6)
+  users              User      @relation(fields: [userId], references: [id])
 
   @@map("authLogs")
 }

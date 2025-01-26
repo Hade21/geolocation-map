@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
+import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
 import { MailService } from '../mail/mail.service';
 import { UsersService } from '../users/users.service';
 import { AuthController } from './auth.controller';
@@ -18,6 +19,7 @@ import { RefreshJwtStrategy } from './strategy/refreshToken-strategy';
       signOptions: { expiresIn: '1h' },
     }),
     PassportModule,
+    CloudinaryModule,
   ],
   providers: [
     AuthService,

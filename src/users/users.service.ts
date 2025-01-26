@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   HttpException,
   Inject,
@@ -8,8 +9,10 @@ import {
 } from '@nestjs/common';
 import { User } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
+import { UploadApiErrorResponse } from 'cloudinary';
 import { nanoid } from 'nanoid';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 import { v4 as uuid } from 'uuid';
 import { Logger } from 'winston';
 import { PrismaService } from '../common/prisma.service';
@@ -28,6 +31,7 @@ export class UsersService {
     private prismaService: PrismaService,
     private validationService: ValidationService,
     private mailService: MailService,
+    private cloudinary: CloudinaryService,
     @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
   ) {}
 
@@ -314,5 +318,42 @@ export class UsersService {
       statusCode: 200,
       message: 'Password has been reset, try to login again',
     };
+  }
+
+  async setProfilePic(file: Express.Multer.File, user: User) {
+    const userExist = await this.prismaService.user.findUnique({
+      where: {
+        username: user.username,
+      },
+    });
+    if (!userExist) throw new HttpException('User not found', 404);
+
+    try {
+      const result = await this.cloudinary.uploadImage(file);
+      if (result) {
+        const public_id = userExist.profilePict
+          ?.split('/')
+          .slice(-2)
+          .join('/')
+          .split('.')[0];
+        public_id && (await this.cloudinary.deleteImage(public_id));
+        await this.prismaService.user.update({
+          where: {
+            username: user.username,
+          },
+          data: {
+            ...userExist,
+            profilePict: result.secure_url,
+          },
+        });
+      }
+      return {
+        statusCode: 200,
+        message: 'Profile picture has been updated',
+      };
+    } catch (error) {
+      const err = error as UploadApiErrorResponse;
+      throw new BadRequestException(err.message);
+    }
   }
 }
