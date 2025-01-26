@@ -6,6 +6,7 @@ import { LocationModule } from './locations/location.module';
 import { MailModule } from './mail/mail.module';
 import { UnitsModule } from './units/units.module';
 import { UsersModule } from './users/users.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { UsersModule } from './users/users.module';
     UsersModule,
     AuthModule,
     MailModule,
+    CloudinaryModule,
   ],
   controllers: [],
   providers: [],

@@ -5,10 +5,14 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   Put,
   Request,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ApiBody, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guard/jwt-auth.guard';
 import {
@@ -74,6 +78,17 @@ export class UsersController {
     @Request() req: RequestWithUser,
   ): Promise<WebResponse<UsersResponse[]>> {
     const result = await this.usersService.getAllUsers(req.user);
+    return { data: result };
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('/profile-picture')
+  @UseInterceptors(FileInterceptor('image'))
+  async setProfilePict(
+    @Request() req: RequestWithUser,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<WebResponse<any>> {
+    const result = await this.usersService.setProfilePic(file, req.user);
     return { data: result };
   }
 }
