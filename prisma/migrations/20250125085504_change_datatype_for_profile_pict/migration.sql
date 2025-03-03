@@ -5,5 +5,4 @@
 
 */
 -- AlterTable
-ALTER TABLE "users" DROP COLUMN "profilePic",
-ADD COLUMN     "profilePict" TEXT;
+ALTER TABLE "users" ADD COLUMN    IF NOT EXISTS "profilePict" TEXT;

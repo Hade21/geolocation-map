@@ -1,2 +1,2 @@
 -- AlterTable
-ALTER TABLE "users" ALTER COLUMN "profilePic" DROP NOT NULL;
+-- ALTER TABLE "users" ALTER COLUMN "profilePic" DROP NOT NULL;
