@@ -19,6 +19,8 @@ export class UsersResponse {
   email: string;
   @ApiPropertyOptional({ type: String, description: 'User role' })
   role?: string;
+  @ApiPropertyOptional({ type: String, description: 'Profile Picture Link' })
+  profilePict?: string;
 }
 
 export class LoginResponse extends UsersResponse {
